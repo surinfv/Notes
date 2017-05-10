@@ -17,7 +17,7 @@ import android.widget.EditText;
 public class NoteFragment extends Fragment {
     private Note mNote;
     private EditText mNoteTitleField;
-    private EditText mNoteDiscrirtionField;
+    private EditText mNoteDescriptionField;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,8 +48,8 @@ public class NoteFragment extends Fragment {
             }
         });
 
-        mNoteDiscrirtionField = (EditText) v.findViewById(R.id.note_recycler_discription);
-        mNoteDiscrirtionField.addTextChangedListener(new TextWatcher() {
+        mNoteDescriptionField = (EditText) v.findViewById(R.id.note_recycler_discription);
+        mNoteDescriptionField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
