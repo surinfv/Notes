@@ -10,7 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by f on 10.05.2017.
@@ -35,12 +39,26 @@ public class NoteListFragment extends Fragment {
 
     private class NoteHolder extends RecyclerView.ViewHolder {
 
-        public TextView mTitleTextView;
+        private TextView mItemTitle;
+        private TextView mItemDescription;
+        private TextView mItemDate;
+
+        private Note mNote;
 
         public NoteHolder(View itemView) {
             super(itemView);
 
-            mTitleTextView = (TextView) itemView;
+            mItemTitle = (TextView) itemView.findViewById(R.id.item_list_title);
+            mItemDescription = (TextView) itemView.findViewById(R.id.item_list_description);
+            mItemDate = (TextView) itemView.findViewById(R.id.item_list_date);
+        }
+
+        public void bindNote(Note note) {
+            mNote = note;
+            mItemTitle.setText(mNote.getTitle());
+            mItemDescription.setText(mNote.getDescription());
+            DateFormat dateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
+            mItemDate.setText(dateFormat.format(mNote.getDate()));
         }
     }
 
@@ -54,14 +72,14 @@ public class NoteListFragment extends Fragment {
         @Override
         public NoteHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(getActivity());
-            View view = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            View view = inflater.inflate(R.layout.list_item, parent, false);
             return new NoteHolder(view);
         }
 
         @Override
         public void onBindViewHolder(NoteHolder holder, int position) {
             Note note = mNotes.get(position);
-            holder.mTitleTextView.setText(note.getTitle());
+            holder.bindNote(note);
         }
 
         @Override
