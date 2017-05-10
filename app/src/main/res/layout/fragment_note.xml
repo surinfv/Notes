@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical" android:layout_width="match_parent"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:padding="10dp"
-                android:animateLayoutChanges="true">
+              android:animateLayoutChanges="true">
 
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -20,10 +21,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:labelFor="@+id/Title"
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/note_recycler_title"
+                android:id="@+id/note_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -32,12 +34,25 @@
                 android:textStyle="bold"/>
 
             <EditText
-                android:id="@+id/note_recycler_discription"
+                android:id="@+id/note_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
                 android:inputType="textMultiLine"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/create_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="create date"/>
+            </LinearLayout>
 
         </LinearLayout>
 

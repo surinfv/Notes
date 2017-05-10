@@ -1,5 +1,6 @@
 package com.fed.notes;
 
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -9,10 +10,12 @@ import java.util.UUID;
 public class Note {
     private UUID mId;
     private String mTitle;
-    private String mDiscription;
+    private String mDescription;
+    private Date mDate;
 
     public Note() {
         mId = UUID.randomUUID();
+        mDate = new Date();
     }
 
     public UUID getId() {
@@ -27,11 +30,15 @@ public class Note {
         mTitle = title;
     }
 
-    public String getDiscription() {
-        return mDiscription;
+    public String getDescription() {
+        return mDescription;
     }
 
-    public void setDiscription(String TDiscription) {
-        mDiscription = TDiscription;
+    public void setDescription(String TDiscription) {
+        mDescription = TDiscription;
+    }
+
+    public Date getDate() {
+        return mDate;
     }
 }

@@ -9,6 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * Created by f on 05.05.2017.
@@ -18,6 +23,8 @@ public class NoteFragment extends Fragment {
     private Note mNote;
     private EditText mNoteTitleField;
     private EditText mNoteDescriptionField;
+    private TextView mDate;
+    private DateFormat mDateFormat;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,7 +37,7 @@ public class NoteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_note, container, false);
 
-        mNoteTitleField = (EditText) v.findViewById(R.id.note_recycler_title);
+        mNoteTitleField = (EditText) v.findViewById(R.id.note_title);
         mNoteTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -48,7 +55,7 @@ public class NoteFragment extends Fragment {
             }
         });
 
-        mNoteDescriptionField = (EditText) v.findViewById(R.id.note_recycler_discription);
+        mNoteDescriptionField = (EditText) v.findViewById(R.id.note_description);
         mNoteDescriptionField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -57,7 +64,7 @@ public class NoteFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mNote.setDiscription(s.toString());
+                mNote.setDescription(s.toString());
             }
 
             @Override
@@ -66,6 +73,9 @@ public class NoteFragment extends Fragment {
             }
         });
 
+        mDate = (TextView) v.findViewById(R.id.create_date);
+        mDateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
+        mDate.setText(mDateFormat.format(mNote.getDate()));
         return v;
     }
 }

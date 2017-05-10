@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Notes</string>
+    <string name="date_format">H:mm EEEE, d MMM yyyy</string>
 </resources>
