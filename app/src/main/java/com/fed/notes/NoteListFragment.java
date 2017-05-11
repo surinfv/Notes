@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -37,7 +38,7 @@ public class NoteListFragment extends Fragment {
         return view;
     }
 
-    private class NoteHolder extends RecyclerView.ViewHolder {
+    private class NoteHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         private TextView mItemTitle;
         private TextView mItemDescription;
@@ -47,6 +48,7 @@ public class NoteListFragment extends Fragment {
 
         public NoteHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
 
             mItemTitle = (TextView) itemView.findViewById(R.id.item_list_title);
             mItemDescription = (TextView) itemView.findViewById(R.id.item_list_description);
@@ -59,6 +61,11 @@ public class NoteListFragment extends Fragment {
             mItemDescription.setText(mNote.getDescription());
             DateFormat dateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
             mItemDate.setText(dateFormat.format(mNote.getDate()));
+        }
+
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(getActivity(), mNote.getTitle(), Toast.LENGTH_SHORT).show();
         }
     }
 
