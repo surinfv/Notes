@@ -39,4 +39,11 @@ import java.util.UUID;
         }
         return null;
     }
+
+    public int getPosition(Note note) {
+        for (int i = 0, p = mNotes.size(); i < p; i++) {
+            if (note.equals(mNotes.get(i))) return i;
+        }
+        return 0;//bad deal
+    }
 }

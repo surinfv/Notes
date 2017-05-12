@@ -24,6 +24,8 @@ public class NoteListFragment extends Fragment {
     private RecyclerView mNoteRecyclerView;
     private NoteAdapter mAdapter;
 
+    private int lastClickedItemPos;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -65,6 +67,7 @@ public class NoteListFragment extends Fragment {
         @Override
         public void onClick(View v) {
 //            Toast.makeText(getActivity(), mNote.getTitle(), Toast.LENGTH_SHORT).show();
+            lastClickedItemPos = NoteBook.get(getActivity()).getPosition(mNote);
             Intent intent = MainActivity.newIntent(getActivity(), mNote.getId());
             startActivity(intent);
         }
@@ -109,7 +112,8 @@ public class NoteListFragment extends Fragment {
             mAdapter = new NoteAdapter(notes);
             mNoteRecyclerView.setAdapter(mAdapter);
         } else {
-            mAdapter.notifyDataSetChanged();
+//            mAdapter.notifyDataSetChanged();
+            mAdapter.notifyItemChanged(lastClickedItemPos);
         }
     }
 }
