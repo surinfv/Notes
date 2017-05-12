@@ -14,6 +14,7 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.UUID;
 
 /**
  * Created by f on 05.05.2017.
@@ -21,6 +22,7 @@ import java.util.Locale;
 
 public class NoteFragment extends Fragment {
     private Note mNote;
+
     private EditText mNoteTitleField;
     private EditText mNoteDescriptionField;
     private TextView mDate;
@@ -29,7 +31,10 @@ public class NoteFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mNote = new Note();
+//        mNote = new Note();
+        UUID noteID = (UUID) getActivity().getIntent().getSerializableExtra(MainActivity.EXTRA_NOTE_ID);
+        mNote = NoteBook.get(getActivity()).getNote(noteID);
+
     }
 
     @Nullable
@@ -38,6 +43,7 @@ public class NoteFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_note, container, false);
 
         mNoteTitleField = (EditText) v.findViewById(R.id.note_title);
+        mNoteTitleField.setText(mNote.getTitle());
         mNoteTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -56,6 +62,7 @@ public class NoteFragment extends Fragment {
         });
 
         mNoteDescriptionField = (EditText) v.findViewById(R.id.note_description);
+        mNoteDescriptionField.setText(mNote.getDescription());
         mNoteDescriptionField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

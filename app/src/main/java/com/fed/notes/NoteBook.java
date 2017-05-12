@@ -10,12 +10,12 @@ import java.util.UUID;
  * Created by f on 10.05.2017.
  */
 
-public class NoteBook {
+ class NoteBook {
     private static NoteBook sNoteBook;
     private List<Note> mNotes;
 
     public static NoteBook get(Context context){
-        if (sNoteBook == null) return new NoteBook(context);
+        if (sNoteBook == null) sNoteBook = new NoteBook(context);
         return sNoteBook;
     }
 

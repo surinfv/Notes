@@ -1,5 +1,6 @@
 package com.fed.notes;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -65,7 +66,9 @@ public class NoteListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(getActivity(), mNote.getTitle(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), mNote.getTitle(), Toast.LENGTH_SHORT).show();
+            Intent intent = MainActivity.newIntent(getActivity(), mNote.getId());
+            startActivity(intent);
         }
     }
 
