@@ -52,6 +52,13 @@ public class NoteFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        NoteBook.get(getActivity()).updateNote(mNote);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
