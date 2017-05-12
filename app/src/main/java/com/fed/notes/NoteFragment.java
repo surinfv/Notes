@@ -28,11 +28,22 @@ public class NoteFragment extends Fragment {
     private TextView mDate;
     private DateFormat mDateFormat;
 
+    public static final String ARGS_NOTE_ID = "argsnoteid";
+
+    public static NoteFragment newInstance(UUID id) {
+        Bundle args = new Bundle();
+        args.putSerializable(ARGS_NOTE_ID, id);
+
+        NoteFragment noteFragment = new NoteFragment();
+        noteFragment.setArguments(args);
+        return noteFragment;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        mNote = new Note();
-        UUID noteID = (UUID) getActivity().getIntent().getSerializableExtra(MainActivity.EXTRA_NOTE_ID);
+        UUID noteID = (UUID) getArguments().getSerializable(ARGS_NOTE_ID);
         mNote = NoteBook.get(getActivity()).getNote(noteID);
 
     }
