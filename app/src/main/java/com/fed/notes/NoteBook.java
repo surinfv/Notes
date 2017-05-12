@@ -1,6 +1,9 @@
 package com.fed.notes;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.fed.notes.database.NoteBaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,8 @@ import java.util.UUID;
  class NoteBook {
     private static NoteBook sNoteBook;
     private List<Note> mNotes;
+    private Context mContext;
+    private SQLiteDatabase mDatabase;
 
     public static NoteBook get(Context context){
         if (sNoteBook == null) sNoteBook = new NoteBook(context);
@@ -20,6 +25,9 @@ import java.util.UUID;
     }
 
     private NoteBook(Context context){
+        mContext = context.getApplicationContext();
+        mDatabase = new NoteBaseHelper(mContext).getWritableDatabase();
+
         mNotes = new ArrayList<>();
 
         //тестовые записи
