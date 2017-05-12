@@ -121,6 +121,8 @@ public class NoteListFragment extends Fragment {
     }
 
     private void updateUI() {
+
+
         if (mAdapter == null) {
             NoteBook notebook = NoteBook.get(getActivity());
             List<Note> notes = notebook.getNotes();

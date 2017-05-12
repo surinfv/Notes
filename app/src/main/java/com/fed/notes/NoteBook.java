@@ -25,7 +25,7 @@ import java.util.UUID;
         //тестовые записи
         for (int i = 0; i < 10; i++) {
             Note note = new Note();
-            note.setTitle("Title # " + i);
+            note.setTitle("Test Note # " + i);
             note.setDescription("This is a long multiple string for describe the note, and repeat this string one more time - This is a long multiple string for describe the note, and repeat this string one more time " + i);
             mNotes.add(0, note);
         }
