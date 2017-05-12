@@ -21,14 +21,20 @@ import java.util.Locale;
  */
 
 public class NoteListFragment extends Fragment {
+    private final String LASTCLICKEDITEM = "lastclickeditem";
+
     private RecyclerView mNoteRecyclerView;
     private NoteAdapter mAdapter;
 
-    private int lastClickedItemPos;
+    private int mLastClickedItemPos;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mLastClickedItemPos = savedInstanceState.getInt(LASTCLICKEDITEM);
+        }
+
         View view = inflater.inflate(R.layout.fragment_note_list, container, false);
 
         mNoteRecyclerView = (RecyclerView) view.findViewById(R.id.note_recycler_view);
@@ -67,7 +73,7 @@ public class NoteListFragment extends Fragment {
         @Override
         public void onClick(View v) {
 //            Toast.makeText(getActivity(), mNote.getTitle(), Toast.LENGTH_SHORT).show();
-            lastClickedItemPos = NoteBook.get(getActivity()).getPosition(mNote);
+            mLastClickedItemPos = NoteBook.get(getActivity()).getPosition(mNote);
             Intent intent = MainActivity.newIntent(getActivity(), mNote.getId());
             startActivity(intent);
         }
@@ -113,7 +119,13 @@ public class NoteListFragment extends Fragment {
             mNoteRecyclerView.setAdapter(mAdapter);
         } else {
 //            mAdapter.notifyDataSetChanged();
-            mAdapter.notifyItemChanged(lastClickedItemPos);
+            mAdapter.notifyItemChanged(mLastClickedItemPos);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(LASTCLICKEDITEM, mLastClickedItemPos);
     }
 }
