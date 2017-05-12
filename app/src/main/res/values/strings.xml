@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Notes</string>
+    <string name="note_name">Note</string>
     <string name="date_format">H:mm EEEE, d MMM yyyy</string>
+    <string name="menu_new_note">new note</string>
+    <string name="menu_delete_note">delete note</string>
 </resources>

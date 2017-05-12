@@ -21,12 +21,22 @@ import java.util.UUID;
 
     private NoteBook(Context context){
         mNotes = new ArrayList<>();
-        for (int i = 0; i < 40; i++) {
+
+        //тестовые записи
+        for (int i = 0; i < 10; i++) {
             Note note = new Note();
             note.setTitle("Title # " + i);
             note.setDescription("This is a long multiple string for describe the note, and repeat this string one more time - This is a long multiple string for describe the note, and repeat this string one more time " + i);
-            mNotes.add(note);
+            mNotes.add(0, note);
         }
+    }
+
+    public void addNote(Note note) {
+        mNotes.add(0, note);
+    }
+
+    public void deleteNote(Note note) {
+        mNotes.remove(note);
     }
 
     public List<Note> getNotes(){

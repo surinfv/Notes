@@ -6,6 +6,9 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -46,6 +49,7 @@ public class NoteFragment extends Fragment {
         UUID noteID = (UUID) getArguments().getSerializable(ARGS_NOTE_ID);
         mNote = NoteBook.get(getActivity()).getNote(noteID);
 
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -95,5 +99,23 @@ public class NoteFragment extends Fragment {
         mDateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
         mDate.setText(mDateFormat.format(mNote.getDate()));
         return v;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.item_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_delete_note:
+                NoteBook.get(getActivity()).deleteNote(mNote);
+                getActivity().finish();
+//                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -28,6 +31,12 @@ public class NoteListFragment extends Fragment {
 
     private int mLastClickedItemPos;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,9 +57,9 @@ public class NoteListFragment extends Fragment {
     private class NoteHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         private TextView mItemTitle;
+
         private TextView mItemDescription;
         private TextView mItemDate;
-
         private Note mNote;
 
         public NoteHolder(View itemView) {
@@ -77,11 +86,11 @@ public class NoteListFragment extends Fragment {
             Intent intent = MainActivity.newIntent(getActivity(), mNote.getId());
             startActivity(intent);
         }
+
     }
-
     private class NoteAdapter extends RecyclerView.Adapter<NoteHolder> {
-        private List<Note> mNotes;
 
+        private List<Note> mNotes;
         public NoteAdapter(List<Note> notes) {
             mNotes = notes;
         }
@@ -103,8 +112,8 @@ public class NoteListFragment extends Fragment {
         public int getItemCount() {
             return mNotes.size();
         }
-    }
 
+    }
     @Override
     public void onResume() {
         super.onResume();
@@ -120,6 +129,26 @@ public class NoteListFragment extends Fragment {
         } else {
 //            mAdapter.notifyDataSetChanged();
             mAdapter.notifyItemChanged(mLastClickedItemPos);
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.list_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_new_note:
+                Note note = new Note();
+                NoteBook.get(getActivity()).addNote(note);
+                Intent intent = MainActivity.newIntent(getActivity(), note.getId());
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
