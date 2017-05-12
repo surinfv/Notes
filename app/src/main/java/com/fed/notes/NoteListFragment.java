@@ -96,10 +96,20 @@ public class NoteListFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
     private void updateUI() {
-        NoteBook notebook = NoteBook.get(getActivity());
-        List<Note> notes = notebook.getNotes();
-        mAdapter = new NoteAdapter(notes);
-        mNoteRecyclerView.setAdapter(mAdapter);
+        if (mAdapter == null) {
+            NoteBook notebook = NoteBook.get(getActivity());
+            List<Note> notes = notebook.getNotes();
+            mAdapter = new NoteAdapter(notes);
+            mNoteRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 }
