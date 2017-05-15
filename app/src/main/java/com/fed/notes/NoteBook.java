@@ -106,7 +106,7 @@ class NoteBook {
                 whereArgs,
                 null, // groupBy
                 null, // having by
-                null // order by
+                NoteTable.Columns.DATE + " DESC" // order by
         );
         return new NoteCursorWrapper(cursor);
     }
