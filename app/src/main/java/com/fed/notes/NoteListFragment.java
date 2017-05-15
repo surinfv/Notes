@@ -29,7 +29,7 @@ public class NoteListFragment extends Fragment {
     private RecyclerView mNoteRecyclerView;
     private NoteAdapter mAdapter;
 
-    private int mLastClickedItemPos;
+//    private int mLastClickedItemPos;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,6 +88,7 @@ public class NoteListFragment extends Fragment {
         }
 
     }
+
     private class NoteAdapter extends RecyclerView.Adapter<NoteHolder> {
 
         private List<Note> mNotes;
@@ -113,7 +114,12 @@ public class NoteListFragment extends Fragment {
             return mNotes.size();
         }
 
+        public void setNotes(List<Note> notes) {
+            mNotes = notes;
+        }
+
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -122,15 +128,16 @@ public class NoteListFragment extends Fragment {
 
     private void updateUI() {
 
+        NoteBook notebook = NoteBook.get(getActivity());
+        List<Note> notes = notebook.getNotes();
 
         if (mAdapter == null) {
-            NoteBook notebook = NoteBook.get(getActivity());
-            List<Note> notes = notebook.getNotes();
             mAdapter = new NoteAdapter(notes);
             mNoteRecyclerView.setAdapter(mAdapter);
         } else {
-//            mAdapter.notifyDataSetChanged();
-            mAdapter.notifyItemChanged(mLastClickedItemPos);
+            mAdapter.setNotes(notes);
+            mAdapter.notifyDataSetChanged();
+//            mAdapter.notifyItemChanged(mLastClickedItemPos);
         }
     }
 
