@@ -14,7 +14,11 @@ public class Note {
     private Date mDate;
 
     public Note() {
-        mId = UUID.randomUUID();
+        this(UUID.randomUUID());
+    }
+
+    public Note(UUID id) {
+        mId = id;
         mDate = new Date();
     }
 
@@ -34,11 +38,15 @@ public class Note {
         return mDescription;
     }
 
-    public void setDescription(String TDiscription) {
-        mDescription = TDiscription;
+    public void setDescription(String description) {
+        mDescription = description;
     }
 
     public Date getDate() {
         return mDate;
+    }
+
+    public void setDate(long date) {
+        mDate = new Date(date);
     }
 }

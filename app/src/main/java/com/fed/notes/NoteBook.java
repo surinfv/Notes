@@ -2,9 +2,11 @@ package com.fed.notes;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.fed.notes.database.NoteBaseHelper;
+import com.fed.notes.database.NoteCursorWrapper;
 import com.fed.notes.database.NoteDbSchema;
 import com.fed.notes.database.NoteDbSchema.NoteTable;
 
@@ -49,10 +51,36 @@ class NoteBook {
     }
 
     public List<Note> getNotes() {
+        List<Note> notes = new ArrayList<>();
+
+        NoteCursorWrapper cursor = queryNotes(null, null);
+
+        try {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()){
+                notes.add(cursor.getNote());
+                cursor.moveToNext();
+            }
+        } finally {
+            cursor.close();
+        }
+        return notes;
     }
 
     public Note getNote(UUID id) {
-        return null;
+        NoteCursorWrapper cursor = queryNotes(
+                NoteTable.Columns.UUID + " = ?",
+                new String[] { id.toString()}
+        );
+        try {
+            if (cursor.getCount() == 0) {
+                return null;
+            }
+            cursor.moveToFirst();
+            return cursor.getNote();
+        } finally {
+            cursor.close();
+        }
     }
 
     public void updateNote(Note note) {
@@ -66,8 +94,21 @@ class NoteBook {
         values.put(NoteTable.Columns.UUID, note.getId().toString());
         values.put(NoteTable.Columns.TITLE, note.getTitle());
         values.put(NoteTable.Columns.DESCRIPTION, note.getDescription());
-        values.put(NoteTable.Columns.DATE, note.getDate().toString());
+        values.put(NoteTable.Columns.DATE, note.getDate().getTime());
         return values;
+    }
+
+    private NoteCursorWrapper queryNotes(String whereClause, String[] whereArgs) {
+        Cursor cursor = mDatabase.query(
+                NoteTable.TABLE_NAME,
+                null, // columns. null - all
+                whereClause,
+                whereArgs,
+                null, // groupBy
+                null, // having by
+                null // order by
+        );
+        return new NoteCursorWrapper(cursor);
     }
 
 //    public int getPosition(Note note) {
