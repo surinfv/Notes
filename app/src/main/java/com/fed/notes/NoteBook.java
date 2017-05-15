@@ -48,6 +48,9 @@ class NoteBook {
     }
 
     public void deleteNote(Note note) {
+        mDatabase.delete(NoteTable.TABLE_NAME,
+                NoteTable.Columns.UUID + "= ?",
+                new String[]{note.getId().toString()});
     }
 
     public List<Note> getNotes() {
