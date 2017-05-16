@@ -1,6 +1,7 @@
 package com.fed.notes;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -136,6 +137,14 @@ public class NoteFragment extends Fragment {
                 public void onClick(DialogInterface dialog, int which) {}
             });
             alertDialog.show();
+
+            case R.id.menu_item_send_via_email:
+                // email method
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_SUBJECT, mNote.getTitle());
+                intent.putExtra(Intent.EXTRA_TEXT, mNote.getDescription());
+                startActivity(intent);
 
             default:
                 return super.onOptionsItemSelected(item);
