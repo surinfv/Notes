@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -137,14 +138,16 @@ public class NoteFragment extends Fragment {
                 public void onClick(DialogInterface dialog, int which) {}
             });
             alertDialog.show();
+                return true;
 
             case R.id.menu_item_send_via_email:
-                // email method
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_SUBJECT, mNote.getTitle());
-                intent.putExtra(Intent.EXTRA_TEXT, mNote.getDescription());
+                Intent intent = ShareCompat.IntentBuilder.from(getActivity())
+                        .setSubject(mNote.getTitle())
+                        .setText(mNote.getDescription())
+                        .setType("text/plain")
+                        .getIntent();
                 startActivity(intent);
+                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
