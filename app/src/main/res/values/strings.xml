@@ -4,4 +4,10 @@
     <string name="date_format">H:mm EEEE, d MMM yyyy</string>
     <string name="menu_new_note">new note</string>
     <string name="menu_delete_note">delete note</string>
+    <string name="menu_send_via_email">e-mail</string>
+
+    <string name="alert_on_del_title">Delete note</string>
+    <string name="alert_on_del_text">are You sure ?</string>
+    <string name="alert_on_del_yes">yep</string>
+    <string name="alert_on_del_cancel">cancel</string>
 </resources>

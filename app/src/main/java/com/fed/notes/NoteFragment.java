@@ -1,8 +1,10 @@
 package com.fed.notes;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -117,10 +119,24 @@ public class NoteFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+
             case R.id.menu_item_delete_note:
-                NoteBook.get(getActivity()).deleteNote(mNote);
-                getActivity().finish();
-//                return true;
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+            alertDialog.setTitle(R.string.alert_on_del_title);
+            alertDialog.setMessage(R.string.alert_on_del_text);
+            alertDialog.setPositiveButton(R.string.alert_on_del_yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    NoteBook.get(getActivity()).deleteNote(mNote);
+                    getActivity().finish();
+                }
+            });
+            alertDialog.setNeutralButton(R.string.alert_on_del_cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+            alertDialog.show();
+
             default:
                 return super.onOptionsItemSelected(item);
         }
