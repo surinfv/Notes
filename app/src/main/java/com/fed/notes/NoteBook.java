@@ -4,12 +4,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 
 import com.fed.notes.database.NoteBaseHelper;
 import com.fed.notes.database.NoteCursorWrapper;
-import com.fed.notes.database.NoteDbSchema;
 import com.fed.notes.database.NoteDbSchema.NoteTable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -112,6 +113,14 @@ class NoteBook {
                 NoteTable.Columns.DATE + " DESC" // order by
         );
         return new NoteCursorWrapper(cursor);
+    }
+
+    public File getPhotoFile(Note note) {
+        //проверяем доступность внешнего хранилища
+        File externalFileDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        if (externalFileDir == null) return null;
+
+        return new File(externalFileDir, note.getPhotoFilename());
     }
 
 //    public int getPosition(Note note) {

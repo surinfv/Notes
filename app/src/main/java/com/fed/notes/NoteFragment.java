@@ -2,7 +2,10 @@ package com.fed.notes;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ShareCompat;
@@ -16,8 +19,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -34,8 +39,16 @@ public class NoteFragment extends Fragment {
     private EditText mNoteDescriptionField;
     private TextView mDate;
     private DateFormat mDateFormat;
+    private ImageView mPhotoView;
+    private File mPhotoFile;
+    private boolean mCanTakePhoto;
+    private Intent mCapturePhotoIntent;
+
 
     public static final String ARGS_NOTE_ID = "argsnoteid";
+    public static final int REQUEST_PHOTO = 0;
+
+
 
     public static NoteFragment newInstance(UUID id) {
         Bundle args = new Bundle();
@@ -49,9 +62,15 @@ public class NoteFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        mNote = new Note();
         UUID noteID = (UUID) getArguments().getSerializable(ARGS_NOTE_ID);
         mNote = NoteBook.get(getActivity()).getNote(noteID);
+        mPhotoFile = NoteBook.get(getActivity()).getPhotoFile(mNote);
+
+        //check 4 photo:
+        PackageManager packageManager = getActivity().getPackageManager();
+        mCapturePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        mCanTakePhoto = mPhotoFile != null &&
+                mCapturePhotoIntent.resolveActivity(packageManager) != null;
 
         setHasOptionsMenu(true);
     }
@@ -87,6 +106,8 @@ public class NoteFragment extends Fragment {
             }
         });
 
+        mPhotoView = (ImageView) v.findViewById(R.id.note_photo);
+
         mNoteDescriptionField = (EditText) v.findViewById(R.id.note_description);
         mNoteDescriptionField.setText(mNote.getDescription());
         mNoteDescriptionField.addTextChangedListener(new TextWatcher() {
@@ -109,6 +130,7 @@ public class NoteFragment extends Fragment {
         mDate = (TextView) v.findViewById(R.id.create_date);
         mDateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
         mDate.setText(mDateFormat.format(mNote.getDate()));
+
         return v;
     }
 
@@ -116,37 +138,47 @@ public class NoteFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.item_menu, menu);
+
+        MenuItem photoButton = menu.findItem(R.id.menu_item_take_photo);
+        photoButton.setVisible(mCanTakePhoto);
+        photoButton.setEnabled(mCanTakePhoto);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
-            case R.id.menu_item_delete_note:
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-            alertDialog.setTitle(R.string.alert_on_del_title);
-            alertDialog.setMessage(R.string.alert_on_del_text);
-            alertDialog.setPositiveButton(R.string.alert_on_del_yes, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    NoteBook.get(getActivity()).deleteNote(mNote);
-                    getActivity().finish();
-                }
-            });
-            alertDialog.setNeutralButton(R.string.alert_on_del_cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {}
-            });
-            alertDialog.show();
+            case R.id.menu_item_take_photo:
+                Uri uri = Uri.fromFile(mPhotoFile);
+                mCapturePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                startActivityForResult(mCapturePhotoIntent, REQUEST_PHOTO);
                 return true;
 
             case R.id.menu_item_send_via_email:
-                Intent intent = ShareCompat.IntentBuilder.from(getActivity())
+            Intent intent = ShareCompat.IntentBuilder.from(getActivity())
                         .setSubject(mNote.getTitle())
                         .setText(mNote.getDescription())
                         .setType("text/plain")
                         .getIntent();
-                startActivity(intent);
+            startActivity(intent);
+            return true;
+
+            case R.id.menu_item_delete_note:
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                alertDialog.setTitle(R.string.alert_on_del_title);
+                alertDialog.setMessage(R.string.alert_on_del_text);
+                alertDialog.setPositiveButton(R.string.alert_on_del_yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        NoteBook.get(getActivity()).deleteNote(mNote);
+                        getActivity().finish();
+                    }
+                });
+                alertDialog.setNeutralButton(R.string.alert_on_del_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {}
+                });
+                alertDialog.show();
                 return true;
 
             default:

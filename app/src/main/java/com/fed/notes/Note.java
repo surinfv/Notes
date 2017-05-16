@@ -49,4 +49,8 @@ public class Note {
     public void setDate(long date) {
         mDate = new Date(date);
     }
+
+    public String getPhotoFilename() {
+        return "IMG_" + getId().toString() + ".jpg";
+    }
 }
