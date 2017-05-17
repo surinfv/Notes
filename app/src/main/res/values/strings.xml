@@ -5,7 +5,7 @@
 
     <string name="menu_new_note">new note</string>
 
-    <string name="menu_send_via_email">send note via</string>
+    <string name="menu_send_via_email">send note</string>
     <string name="menu_take_photo">take photo</string>
     <string name="menu_delete_note">delete note</string>
 

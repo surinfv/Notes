@@ -175,9 +175,11 @@ public class NoteFragment extends Fragment {
 
             case R.id.menu_item_send_via_email:
             Intent intent = ShareCompat.IntentBuilder.from(getActivity())
-                        .setSubject(mNote.getTitle())
+                        .setSubject("from Note app: " + mNote.getTitle())
                         .setText(mNote.getDescription())
-                        .setType("text/plain")
+                        .setStream(Uri.fromFile(mPhotoFile))
+//                        .setType("text/plain")
+                        .setType("image/*")
                         .getIntent();
             startActivity(intent);
             return true;
