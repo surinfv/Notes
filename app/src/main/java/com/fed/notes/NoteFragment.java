@@ -1,8 +1,11 @@
 package com.fed.notes;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -39,6 +42,7 @@ public class NoteFragment extends Fragment {
     private EditText mNoteDescriptionField;
     private TextView mDate;
     private DateFormat mDateFormat;
+
     private ImageView mPhotoView;
     private File mPhotoFile;
     private boolean mCanTakePhoto;
@@ -78,7 +82,7 @@ public class NoteFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-
+        mPhotoFile = NoteBook.get(getActivity()).getPhotoFile(mNote);
         NoteBook.get(getActivity()).updateNote(mNote);
     }
 
@@ -106,8 +110,6 @@ public class NoteFragment extends Fragment {
             }
         });
 
-        mPhotoView = (ImageView) v.findViewById(R.id.note_photo);
-
         mNoteDescriptionField = (EditText) v.findViewById(R.id.note_description);
         mNoteDescriptionField.setText(mNote.getDescription());
         mNoteDescriptionField.addTextChangedListener(new TextWatcher() {
@@ -130,6 +132,11 @@ public class NoteFragment extends Fragment {
         mDate = (TextView) v.findViewById(R.id.create_date);
         mDateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
         mDate.setText(mDateFormat.format(mNote.getDate()));
+
+        mPhotoView = (ImageView) v.findViewById(R.id.note_photo);
+        if (mPhotoFile.exists()) {
+            updatePhotoView();
+        }
 
         return v;
     }
@@ -184,5 +191,21 @@ public class NoteFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) return;
+        if (requestCode == REQUEST_PHOTO) {
+            updatePhotoView();
+        }
+
+//        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void updatePhotoView() {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
+            mPhotoView.setImageBitmap(bitmap);
+//        mPhotoView.setImageURI(Uri.fromFile(mPhotoFile));
     }
 }

@@ -52,6 +52,7 @@ class NoteBook {
         mDatabase.delete(NoteTable.TABLE_NAME,
                 NoteTable.Columns.UUID + "= ?",
                 new String[]{note.getId().toString()});
+        getPhotoFile(note).delete();    // попробовал удалить фото при удалении заметки
     }
 
     public List<Note> getNotes() {
