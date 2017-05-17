@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -136,7 +137,18 @@ public class NoteFragment extends Fragment {
         mPhotoView = (ImageView) v.findViewById(R.id.note_photo);
         if (mPhotoFile.exists()) {
             updatePhotoView();
+        } else {
+            mPhotoView.setVisibility(View.GONE);
         }
+        mPhotoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // тут надо открыть DialogFragment с картинкой
+                FragmentManager manager = getFragmentManager();
+                ImageDialog dialog = ImageDialog.newInstance(mPhotoFile.getPath());
+                dialog.show(manager, "IMAGE_FULL");
+            }
+        });
 
         return v;
     }
@@ -206,6 +218,7 @@ public class NoteFragment extends Fragment {
     private void updatePhotoView() {
             Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
             mPhotoView.setImageBitmap(bitmap);
+        mPhotoView.setVisibility(View.VISIBLE);
 //        mPhotoView.setImageURI(Uri.fromFile(mPhotoFile));
     }
 }
