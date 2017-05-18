@@ -78,7 +78,7 @@ public class NoteListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Intent intent = MainActivity.newIntent(getActivity(), mNote.getId());
+            Intent intent = NoteActivity.newIntent(getActivity(), mNote.getId());
             startActivity(intent);
         }
 
@@ -148,7 +148,7 @@ public class NoteListFragment extends Fragment {
             case R.id.menu_item_new_note:
                 Note note = new Note();
                 NoteBook.get(getActivity()).addNote(note);
-                Intent intent = MainActivity.newIntent(getActivity(), note.getId());
+                Intent intent = NoteActivity.newIntent(getActivity(), note.getId());
                 startActivity(intent);
                 return true;
             default:

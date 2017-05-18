@@ -2,13 +2,11 @@ package com.fed.notes;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
-import android.widget.Toast;
 
 import java.util.UUID;
 
-public class MainActivity extends SingleFragmentActivity {
+public class NoteActivity extends SingleFragmentActivity {
 
     private static final String EXTRA_NOTE_ID = "extranoteid";
 
@@ -19,7 +17,7 @@ public class MainActivity extends SingleFragmentActivity {
     }
 
     public static Intent newIntent(Context packageContext, UUID noteID) {
-        Intent intent = new Intent(packageContext, MainActivity.class);
+        Intent intent = new Intent(packageContext, NoteActivity.class);
         intent.putExtra(EXTRA_NOTE_ID, noteID);
         return intent;
     }
