@@ -24,12 +24,9 @@ import java.util.Locale;
  */
 
 public class NoteListFragment extends Fragment {
-//    private final String LASTCLICKEDITEM = "lastclickeditem";
 
     private RecyclerView mNoteRecyclerView;
     private NoteAdapter mAdapter;
-
-//    private int mLastClickedItemPos;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,8 +78,6 @@ public class NoteListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-//            Toast.makeText(getActivity(), mNote.getTitle(), Toast.LENGTH_SHORT).show();
-//            mLastClickedItemPos = NoteBook.get(getActivity()).getPosition(mNote);
             Intent intent = MainActivity.newIntent(getActivity(), mNote.getId());
             startActivity(intent);
         }

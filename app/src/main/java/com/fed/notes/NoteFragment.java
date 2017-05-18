@@ -43,7 +43,6 @@ public class NoteFragment extends Fragment {
     private EditText mNoteDescriptionField;
     private TextView mDate;
     private DateFormat mDateFormat;
-    private ScrollView mScrollView;
 
     private ImageView mPhotoView;
     private File mPhotoFile;
@@ -225,6 +224,4 @@ public class NoteFragment extends Fragment {
         mPhotoView.setVisibility(View.VISIBLE);
 //        mPhotoView.setImageURI(Uri.fromFile(mPhotoFile));
     }
-
-    
 }
