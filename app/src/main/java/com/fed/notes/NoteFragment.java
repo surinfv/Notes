@@ -25,6 +25,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.fed.notes.utils.ImageDialog;
+import com.fed.notes.utils.PictureUtils;
+
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

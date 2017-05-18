@@ -1,4 +1,4 @@
-package com.fed.notes;
+package com.fed.notes.utils;
 
 import android.app.Dialog;
 import android.graphics.Bitmap;
@@ -10,6 +10,8 @@ import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.fed.notes.R;
 
 
 /**

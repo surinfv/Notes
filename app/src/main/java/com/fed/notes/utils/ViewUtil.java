@@ -1,4 +1,4 @@
-package com.fed.notes;
+package com.fed.notes.utils;
 
 import android.content.Context;
 import android.view.ActionMode;

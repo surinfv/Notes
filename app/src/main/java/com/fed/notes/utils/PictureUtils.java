@@ -1,4 +1,4 @@
-package com.fed.notes;
+package com.fed.notes.utils;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
