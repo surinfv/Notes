@@ -22,7 +22,8 @@
 
         <activity android:name=".MainActivity"
                   android:label="@string/note_name"
-                  android:parentActivityName=".NoteListActivity">
+                  android:parentActivityName=".NoteListActivity"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
             </intent-filter>

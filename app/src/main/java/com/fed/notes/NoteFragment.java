@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.io.File;
@@ -43,6 +43,7 @@ public class NoteFragment extends Fragment {
     private EditText mNoteDescriptionField;
     private TextView mDate;
     private DateFormat mDateFormat;
+    private ScrollView mScrollView;
 
     private ImageView mPhotoView;
     private File mPhotoFile;
@@ -52,7 +53,6 @@ public class NoteFragment extends Fragment {
 
     public static final String ARGS_NOTE_ID = "argsnoteid";
     public static final int REQUEST_PHOTO = 0;
-
 
 
     public static NoteFragment newInstance(UUID id) {
@@ -174,15 +174,15 @@ public class NoteFragment extends Fragment {
                 return true;
 
             case R.id.menu_item_send_via_email:
-            Intent intent = ShareCompat.IntentBuilder.from(getActivity())
+                Intent intent = ShareCompat.IntentBuilder.from(getActivity())
                         .setSubject("from Note app: " + mNote.getTitle())
                         .setText(mNote.getDescription())
                         .setStream(Uri.fromFile(mPhotoFile))
 //                        .setType("text/plain")
                         .setType("image/*")
                         .getIntent();
-            startActivity(intent);
-            return true;
+                startActivity(intent);
+                return true;
 
             case R.id.menu_item_delete_note:
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
@@ -197,7 +197,8 @@ public class NoteFragment extends Fragment {
                 });
                 alertDialog.setNeutralButton(R.string.alert_on_del_cancel, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {}
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
                 });
                 alertDialog.show();
                 return true;
@@ -217,10 +218,13 @@ public class NoteFragment extends Fragment {
 //        super.onActivityResult(requestCode, resultCode, data);
     }
 
+
     private void updatePhotoView() {
-            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
-            mPhotoView.setImageBitmap(bitmap);
+        Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
+        mPhotoView.setImageBitmap(bitmap);
         mPhotoView.setVisibility(View.VISIBLE);
 //        mPhotoView.setImageURI(Uri.fromFile(mPhotoFile));
     }
+
+    
 }
