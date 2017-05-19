@@ -145,6 +145,7 @@ public class NoteListFragment extends Fragment {
 
         @Override
         public void onItemDismiss(int position) {
+            NoteBook.get(getActivity()).deleteNote(mNotes.get(position));
             mNotes.remove(position);
             notifyItemRemoved(position);
         }
