@@ -15,8 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.fed.notes.utils.touchhelper.ItemTouchHelperAdapter;
-import com.fed.notes.utils.touchhelper.SimpleItemTouchHelperCallback;
+import com.fed.notes.touchhelper.ItemTouchHelperAdapter;
+import com.fed.notes.touchhelper.SimpleItemTouchHelperCallback;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

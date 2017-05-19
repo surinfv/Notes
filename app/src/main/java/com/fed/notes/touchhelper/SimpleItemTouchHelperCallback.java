@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.fed.notes.utils.touchhelper;
+package com.fed.notes.touchhelper;
 
 import android.graphics.Canvas;
 import android.support.v7.widget.GridLayoutManager;
