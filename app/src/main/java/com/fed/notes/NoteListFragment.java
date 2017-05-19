@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,8 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.fed.notes.utils.touchhelper.ItemTouchHelperAdapter;
+import com.fed.notes.utils.touchhelper.SimpleItemTouchHelperCallback;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,6 +32,7 @@ public class NoteListFragment extends Fragment {
 
     private RecyclerView mNoteRecyclerView;
     private NoteAdapter mAdapter;
+    private ItemTouchHelper mItemTouchHelper;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,6 +55,15 @@ public class NoteListFragment extends Fragment {
 
         updateUI();
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
+        mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(mNoteRecyclerView);
     }
 
     private class NoteHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -84,7 +99,7 @@ public class NoteListFragment extends Fragment {
 
     }
 
-    private class NoteAdapter extends RecyclerView.Adapter<NoteHolder> {
+    private class NoteAdapter extends RecyclerView.Adapter<NoteHolder> implements ItemTouchHelperAdapter {
 
         private List<Note> mNotes;
         public NoteAdapter(List<Note> notes) {
@@ -111,6 +126,27 @@ public class NoteListFragment extends Fragment {
 
         public void setNotes(List<Note> notes) {
             mNotes = notes;
+        }
+
+        @Override
+        public boolean onItemMove(int fromPosition, int toPosition) {
+            if (fromPosition < toPosition) {
+                for (int i = fromPosition; i < toPosition; i++) {
+                    Collections.swap(mNotes, i, i + 1);
+                }
+            } else {
+                for (int i = fromPosition; i > toPosition; i--) {
+                    Collections.swap(mNotes, i, i - 1);
+                }
+            }
+            notifyItemMoved(fromPosition, toPosition);
+            return true;
+        }
+
+        @Override
+        public void onItemDismiss(int position) {
+            mNotes.remove(position);
+            notifyItemRemoved(position);
         }
 
     }
