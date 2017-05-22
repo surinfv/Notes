@@ -3,10 +3,12 @@ package com.fed.notes;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,10 +29,15 @@ import android.widget.TextView;
 
 import com.fed.notes.utils.ImageDialog;
 import com.fed.notes.utils.PictureUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -193,6 +200,7 @@ public class NoteFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         NoteBook.get(getActivity()).deleteNote(mNote);
+                        delFromOrderList(mNote.getId());
                         getActivity().finish();
                     }
                 });
@@ -207,6 +215,20 @@ public class NoteFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void delFromOrderList(UUID uuid) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String json = prefs.getString(NoteListFragment.NOTES_ORDER, "");
+        Gson gson = new Gson();
+        Type listType = new TypeToken<ArrayList<UUID>>(){}.getType();
+        List<UUID> IDs = gson.fromJson(json, listType);
+        IDs.remove(uuid);
+
+        SharedPreferences.Editor editor = prefs.edit();
+        json = gson.toJson(IDs);
+        editor.putString(NoteListFragment.NOTES_ORDER, json);
+        editor.apply();
     }
 
     @Override
