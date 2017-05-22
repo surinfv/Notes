@@ -1,6 +1,8 @@
 package com.fed.notes;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,12 +19,17 @@ import android.widget.TextView;
 
 import com.fed.notes.touchhelper.ItemTouchHelperAdapter;
 import com.fed.notes.touchhelper.SimpleItemTouchHelperCallback;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 /**
  * Created by f on 10.05.2017.
@@ -34,17 +41,22 @@ public class NoteListFragment extends Fragment {
     private NoteAdapter mAdapter;
     private ItemTouchHelper mItemTouchHelper;
 
+    SharedPreferences mShPref;
+    public static final String NOTES_ORDER = "notesoreder";
+    private List<UUID> mNotesOrder;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 //        if (savedInstanceState != null) {
-//            mLastClickedItemPos = savedInstanceState.getInt(LASTCLICKEDITEM);
 //        }
 
         View view = inflater.inflate(R.layout.fragment_note_list, container, false);
@@ -133,10 +145,12 @@ public class NoteListFragment extends Fragment {
             if (fromPosition < toPosition) {
                 for (int i = fromPosition; i < toPosition; i++) {
                     Collections.swap(mNotes, i, i + 1);
+                    Collections.swap(mNotesOrder, i, i + 1);
                 }
             } else {
                 for (int i = fromPosition; i > toPosition; i--) {
                     Collections.swap(mNotes, i, i - 1);
+                    Collections.swap(mNotesOrder, i, i - 1);
                 }
             }
             notifyItemMoved(fromPosition, toPosition);
@@ -147,6 +161,7 @@ public class NoteListFragment extends Fragment {
         public void onItemDismiss(int position) {
             NoteBook.get(getActivity()).deleteNote(mNotes.get(position));
             mNotes.remove(position);
+            mNotesOrder.remove(position);
             notifyItemRemoved(position);
         }
 
@@ -159,9 +174,17 @@ public class NoteListFragment extends Fragment {
     }
 
     private void updateUI() {
+        loadOrder();
 
         NoteBook notebook = NoteBook.get(getActivity());
-        List<Note> notes = notebook.getNotes();
+//        List<Note> notes = notebook.getNotes();
+
+        List<Note> notes = new ArrayList<>();
+        if (mNotesOrder.size() > 0) {
+            for (UUID id : mNotesOrder) {
+                notes.add(notebook.getNote(id));
+            }
+        }
 
         if (mAdapter == null) {
             mAdapter = new NoteAdapter(notes);
@@ -184,6 +207,9 @@ public class NoteListFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_item_new_note:
                 Note note = new Note();
+
+                mNotesOrder.add(0, note.getId());
+
                 NoteBook.get(getActivity()).addNote(note);
                 Intent intent = NoteActivity.newIntent(getActivity(), note.getId());
                 startActivity(intent);
@@ -196,6 +222,33 @@ public class NoteListFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-//        outState.putInt(LASTCLICKEDITEM, mLastClickedItemPos);
+    }
+
+    private void saveOrder() {
+        mShPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mShPref.edit();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(mNotesOrder);
+
+        editor.putString(NOTES_ORDER, json);
+        editor.apply();
+    }
+
+    private void loadOrder() {
+        mNotesOrder = new ArrayList<>();
+        mShPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        String json = mShPref.getString(NOTES_ORDER, "");
+        if (!json.equals("")) {
+            Gson gson = new Gson();
+            Type listType = new TypeToken<ArrayList<UUID>>(){}.getType();
+            mNotesOrder = gson.fromJson(json, listType);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        saveOrder();
     }
 }

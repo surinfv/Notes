@@ -33,7 +33,6 @@ class NoteBook {
         mContext = context.getApplicationContext();
         mDatabase = new NoteBaseHelper(mContext).getWritableDatabase();
 
-
         //тестовые записи
 //        for (int i = 0; i < 10; i++) {
 //            Note note = new Note();
