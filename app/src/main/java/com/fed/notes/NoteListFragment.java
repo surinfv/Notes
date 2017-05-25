@@ -2,9 +2,11 @@ package com.fed.notes;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fed.notes.touchhelper.ItemTouchHelperAdapter;
 import com.fed.notes.touchhelper.SimpleItemTouchHelperCallback;
@@ -113,6 +116,9 @@ public class NoteListFragment extends Fragment {
 
     private class NoteAdapter extends RecyclerView.Adapter<NoteHolder> implements ItemTouchHelperAdapter {
 
+        private Note mNoteTmpDel;
+        private int mNoteDelPos;
+
         private List<Note> mNotes;
         public NoteAdapter(List<Note> notes) {
             mNotes = notes;
@@ -159,11 +165,26 @@ public class NoteListFragment extends Fragment {
 
         @Override
         public void onItemDismiss(int position) {
+            //сохранить заметку во временный экземпляр и её позицию
             NoteBook.get(getActivity()).deleteNote(mNotes.get(position));
             mNotes.remove(position);
             mNotesOrder.remove(position);
             notifyItemRemoved(position);
+
+            Snackbar mSnackBar = Snackbar.make(mNoteRecyclerView, "note removed", Snackbar.LENGTH_LONG);
+            View snackbarView = mSnackBar.getView();
+            snackbarView.setBackgroundColor(getResources().getColor(R.color.snack_bar_background));
+            mSnackBar.setAction("кнопка", snackbarOnClickListener);
+            mSnackBar.show();
         }
+
+        View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ///вернуть удаленную заметку наместо (3 места)
+                Toast.makeText(getActivity(), "Молодец!", Toast.LENGTH_LONG).show();
+            }
+        };
 
     }
 
