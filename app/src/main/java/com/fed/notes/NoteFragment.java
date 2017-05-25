@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -57,6 +58,7 @@ public class NoteFragment extends Fragment {
     private File mPhotoFile;
     private boolean mCanTakePhoto;
     private Intent mCapturePhotoIntent;
+    private Uri mUriPhotoFile;
 
 
     public static final String ARGS_NOTE_ID = "argsnoteid";
@@ -84,6 +86,8 @@ public class NoteFragment extends Fragment {
         mCapturePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         mCanTakePhoto = mPhotoFile != null &&
                 mCapturePhotoIntent.resolveActivity(packageManager) != null;
+
+        mUriPhotoFile = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", mPhotoFile);
 
         setHasOptionsMenu(true);
     }
@@ -176,20 +180,36 @@ public class NoteFragment extends Fragment {
         switch (item.getItemId()) {
 
             case R.id.menu_item_take_photo:
-                Uri uri = Uri.fromFile(mPhotoFile);
-                mCapturePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+//                Uri uri = Uri.fromFile(mPhotoFile);
+//                Uri uri = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", mPhotoFile);
+                mCapturePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mUriPhotoFile);
                 startActivityForResult(mCapturePhotoIntent, REQUEST_PHOTO);
                 return true;
 
             case R.id.menu_item_send_via_email:
-                Intent intent = ShareCompat.IntentBuilder.from(getActivity())
-                        .setSubject("from Note app: " + mNote.getTitle())
-                        .setText(mNote.getDescription())
-                        .setStream(Uri.fromFile(mPhotoFile))
-//                        .setType("text/plain")
-                        .setType("image/*")
-                        .getIntent();
-                startActivity(intent);
+                Intent intent;
+                if (mPhotoFile.exists()) {
+                    intent = ShareCompat.IntentBuilder.from(getActivity())
+                            .setType("image/*")
+                            .setSubject("from Note app: " + mNote.getTitle())
+                            .setText(mNote.getDescription())
+                            .setStream(mUriPhotoFile)
+                            .getIntent();
+                } else {
+//                    intent = new Intent(android.content.Intent.ACTION_SEND);
+//                    intent.setType("plain/text");
+//                    intent.putExtra(Intent.EXTRA_SUBJECT, mNote.getTitle());
+//                    intent.putExtra(Intent.EXTRA_TEXT, mNote.getDescription());
+                    intent = ShareCompat.IntentBuilder.from(getActivity())
+                            .setType("plain/text")
+                            .setSubject("from Note app: " + mNote.getTitle())
+                            .setText(mNote.getDescription())
+                            .getIntent();
+                }
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(intent);
+//                    startActivity(Intent.createChooser(intent, "send via..."));
+                }
                 return true;
 
             case R.id.menu_item_delete_note:
