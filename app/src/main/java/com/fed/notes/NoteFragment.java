@@ -190,7 +190,8 @@ public class NoteFragment extends Fragment {
                 Intent intent;
                 if (mPhotoFile.exists()) {
                     intent = ShareCompat.IntentBuilder.from(getActivity())
-                            .setType("image/*")
+                            .setType("plain/text")
+//                            .setType("image/*")
                             .setSubject("from Note app: " + mNote.getTitle())
                             .setText(mNote.getDescription())
                             .setStream(mUriPhotoFile)
