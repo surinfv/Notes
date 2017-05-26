@@ -26,6 +26,10 @@ public class Note {
         return mId;
     }
 
+    public void setId(UUID id) {
+        mId = id;
+    }
+
     public String getTitle() {
         return mTitle;
     }

@@ -2,7 +2,6 @@ package com.fed.notes;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -116,8 +115,8 @@ public class NoteListFragment extends Fragment {
 
     private class NoteAdapter extends RecyclerView.Adapter<NoteHolder> implements ItemTouchHelperAdapter {
 
-        private Note mNoteTmpDel;
-        private int mNoteDelPos;
+        private Note mNoteTmp;
+        private int mNoteTmpPos;
 
         private List<Note> mNotes;
         public NoteAdapter(List<Note> notes) {
@@ -166,26 +165,40 @@ public class NoteListFragment extends Fragment {
         @Override
         public void onItemDismiss(int position) {
             //сохранить заметку во временный экземпляр и её позицию
+            cloneNote(mNotes.get(position), position);
+
             NoteBook.get(getActivity()).deleteNote(mNotes.get(position));
             mNotes.remove(position);
             mNotesOrder.remove(position);
             notifyItemRemoved(position);
 
-            Snackbar mSnackBar = Snackbar.make(mNoteRecyclerView, "note removed", Snackbar.LENGTH_LONG);
+            Snackbar mSnackBar = Snackbar.make(mNoteRecyclerView, mNoteTmp.getTitle() + " removed", Snackbar.LENGTH_LONG);
             View snackbarView = mSnackBar.getView();
             snackbarView.setBackgroundColor(getResources().getColor(R.color.snack_bar_background));
-            mSnackBar.setAction("кнопка", snackbarOnClickListener);
+            mSnackBar.setAction("UNDO", snackbarOnClickListener);
             mSnackBar.show();
         }
 
         View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ///вернуть удаленную заметку наместо (3 места)
-                Toast.makeText(getActivity(), "Молодец!", Toast.LENGTH_LONG).show();
+                ///вернуть удаленную заметку на место
+                Toast.makeText(getActivity(), "returned", Toast.LENGTH_LONG).show();
+                NoteBook.get(getActivity()).addNote(mNoteTmp);
+                mNotes.add(mNoteTmpPos, mNoteTmp);
+                mNotesOrder.add(mNoteTmpPos, mNoteTmp.getId());
+                notifyItemInserted(mNoteTmpPos);
             }
         };
 
+        private void cloneNote(Note note, int pos) {
+            mNoteTmpPos = pos;
+            mNoteTmp = new Note();
+            mNoteTmp.setTitle(note.getTitle());
+            mNoteTmp.setDescription(note.getDescription());
+            mNoteTmp.setId(note.getId());
+            mNoteTmp.setDate(note.getDate().getTime());
+        }
     }
 
     @Override
