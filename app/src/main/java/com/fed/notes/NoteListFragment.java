@@ -167,7 +167,7 @@ public class NoteListFragment extends Fragment {
             //сохранить заметку во временный экземпляр и её позицию
             cloneNote(mNotes.get(position), position);
 
-            NoteBook.get(getActivity()).deleteNote(mNotes.get(position));
+//            NoteBook.get(getActivity()).deleteNote(mNotes.get(position));
             mNotes.remove(position);
             mNotesOrder.remove(position);
             notifyItemRemoved(position);
@@ -177,14 +177,27 @@ public class NoteListFragment extends Fragment {
             snackbarView.setBackgroundColor(getResources().getColor(R.color.snack_bar_background));
             mSnackBar.setAction("UNDO", snackbarOnClickListener);
             mSnackBar.show();
+
+            mSnackBar.addCallback(new Snackbar.Callback() {
+                        @Override
+                        public void onDismissed(Snackbar snackbar, int event) {
+                            if (event != Snackbar.Callback.DISMISS_EVENT_ACTION) {
+                                NoteBook.get(getActivity()).deleteNote(mNoteTmp);
+                            }
+                        }
+
+//                        @Override
+//                        public void onShown(Snackbar snackbar) {
+//                            Toast.makeText(getActivity(), "Snackbar is showed", Toast.LENGTH_SHORT).show();
+//                        }
+                    });
         }
 
         View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ///вернуть удаленную заметку на место
-                Toast.makeText(getActivity(), "returned", Toast.LENGTH_LONG).show();
-                NoteBook.get(getActivity()).addNote(mNoteTmp);
+                Toast.makeText(getActivity(), "returned", Toast.LENGTH_SHORT).show();
                 mNotes.add(mNoteTmpPos, mNoteTmp);
                 mNotesOrder.add(mNoteTmpPos, mNoteTmp.getId());
                 notifyItemInserted(mNoteTmpPos);
