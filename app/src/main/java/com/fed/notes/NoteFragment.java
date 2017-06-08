@@ -147,11 +147,15 @@ public class NoteFragment extends Fragment {
         mDate.setText(mDateFormat.format(mNote.getDate()));
 
         mPhotoView = (ImageView) v.findViewById(R.id.note_photo);
-        if (mPhotoFile.exists()) {
-            updatePhotoView();
-        } else {
-            mPhotoView.setVisibility(View.GONE);
-        }
+//        if (mPhotoFile.exists()) {
+//            updatePhotoView();
+//        } else {
+//            mPhotoView.setVisibility(View.GONE);
+//        }
+        //вместо предыдущих строчек внес в updatePhotoView
+        updatePhotoView();
+
+
         mPhotoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,8 +186,52 @@ public class NoteFragment extends Fragment {
             case R.id.menu_item_take_photo:
 //                Uri uri = Uri.fromFile(mPhotoFile);
 //                Uri uri = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", mPhotoFile);
-                mCapturePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mUriPhotoFile);
-                startActivityForResult(mCapturePhotoIntent, REQUEST_PHOTO);
+//                mCapturePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mUriPhotoFile);
+//                startActivityForResult(mCapturePhotoIntent, REQUEST_PHOTO);
+
+                AlertDialog.Builder photoAlertDialog = new AlertDialog.Builder(getActivity());
+                photoAlertDialog.setTitle(R.string.alert_on_photo_title);
+                photoAlertDialog.setPositiveButton(R.string.alert_on_photo_cam, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mCapturePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mUriPhotoFile);
+                        startActivityForResult(mCapturePhotoIntent, REQUEST_PHOTO);
+                    }
+                });
+                photoAlertDialog.setNegativeButton(R.string.alert_on_photo_gallery, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //add gallery intent
+                    }
+                });
+
+                if (!mPhotoFile.exists()) {
+                    photoAlertDialog.setMessage(R.string.alert_on_photo_text_first_photo);
+                } else {
+                    photoAlertDialog.setMessage(R.string.alert_on_photo_text_second_photo);
+                    photoAlertDialog.setNeutralButton(R.string.alert_on_photo_remove, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            AlertDialog.Builder photoDelDialog = new AlertDialog.Builder(getActivity());
+                            photoDelDialog.setTitle(R.string.alert_del_photo_title);
+                            photoDelDialog.setMessage(R.string.alert_del_photo_text);
+                            photoDelDialog.setPositiveButton(R.string.alert_del_photo_yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mPhotoFile.delete();
+                                    updatePhotoView();
+                                }
+                            });
+                            photoDelDialog.setNegativeButton(R.string.alert_del_photo_no, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            });
+                            photoDelDialog.show();
+                        }
+                    });
+                }
+                photoAlertDialog.show();
                 return true;
 
             case R.id.menu_item_send_via_email:
@@ -197,10 +245,6 @@ public class NoteFragment extends Fragment {
                             .setStream(mUriPhotoFile)
                             .getIntent();
                 } else {
-//                    intent = new Intent(android.content.Intent.ACTION_SEND);
-//                    intent.setType("plain/text");
-//                    intent.putExtra(Intent.EXTRA_SUBJECT, mNote.getTitle());
-//                    intent.putExtra(Intent.EXTRA_TEXT, mNote.getDescription());
                     intent = ShareCompat.IntentBuilder.from(getActivity())
                             .setType("plain/text")
                             .setSubject("from Note app: " + mNote.getTitle())
@@ -214,10 +258,10 @@ public class NoteFragment extends Fragment {
                 return true;
 
             case R.id.menu_item_delete_note:
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                alertDialog.setTitle(R.string.alert_on_del_title);
-                alertDialog.setMessage(R.string.alert_on_del_text);
-                alertDialog.setPositiveButton(R.string.alert_on_del_yes, new DialogInterface.OnClickListener() {
+                AlertDialog.Builder deleteAlertDialog = new AlertDialog.Builder(getActivity());
+                deleteAlertDialog.setTitle(R.string.alert_on_del_title);
+                deleteAlertDialog.setMessage(R.string.alert_on_del_text);
+                deleteAlertDialog.setPositiveButton(R.string.alert_on_del_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         NoteBook.get(getActivity()).deleteNote(mNote);
@@ -225,12 +269,12 @@ public class NoteFragment extends Fragment {
                         getActivity().finish();
                     }
                 });
-                alertDialog.setNeutralButton(R.string.alert_on_del_cancel, new DialogInterface.OnClickListener() {
+                deleteAlertDialog.setNeutralButton(R.string.alert_on_del_cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
-                alertDialog.show();
+                deleteAlertDialog.show();
                 return true;
 
             default:
@@ -264,9 +308,13 @@ public class NoteFragment extends Fragment {
 
 
     private void updatePhotoView() {
-        Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
-        mPhotoView.setImageBitmap(bitmap);
-        mPhotoView.setVisibility(View.VISIBLE);
+        if (mPhotoFile.exists()) {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
+            mPhotoView.setImageBitmap(bitmap);
+            mPhotoView.setVisibility(View.VISIBLE);
+        } else {
+            mPhotoView.setVisibility(View.GONE);
+        }
 //        mPhotoView.setImageURI(Uri.fromFile(mPhotoFile));
     }
 }

@@ -224,7 +224,6 @@ public class NoteListFragment extends Fragment {
         loadOrder();
 
         NoteBook notebook = NoteBook.get(getActivity());
-//        List<Note> notes = notebook.getNotes();
 
         List<Note> notes = new ArrayList<>();
         if (mNotesOrder.size() > 0) {
@@ -239,7 +238,6 @@ public class NoteListFragment extends Fragment {
         } else {
             mAdapter.setNotes(notes);
             mAdapter.notifyDataSetChanged();
-//            mAdapter.notifyItemChanged(mLastClickedItemPos);
         }
     }
 

@@ -13,4 +13,16 @@
     <string name="alert_on_del_text">are You sure ?</string>
     <string name="alert_on_del_yes">yep</string>
     <string name="alert_on_del_cancel">cancel</string>
+
+    <string name="alert_on_photo_title">photo</string>
+    <string name="alert_on_photo_text_first_photo">Do you want get new photo?</string>
+    <string name="alert_on_photo_text_second_photo">Do you want get new photo or remove this one ?</string>
+    <string name="alert_on_photo_cam">from cam</string>
+    <string name="alert_on_photo_gallery">from gallery</string>
+    <string name="alert_on_photo_remove">remove photo</string>
+
+    <string name="alert_del_photo_title">remove photo?</string>
+    <string name="alert_del_photo_text">are you sure?</string>
+    <string name="alert_del_photo_yes">yep</string>
+    <string name="alert_del_photo_no">nope</string>
 </resources>
