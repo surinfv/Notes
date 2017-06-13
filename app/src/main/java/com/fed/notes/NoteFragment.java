@@ -24,9 +24,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fed.notes.utils.ImageDialog;
 import com.fed.notes.utils.PictureUtils;
@@ -147,12 +149,6 @@ public class NoteFragment extends Fragment {
         mDate.setText(mDateFormat.format(mNote.getDate()));
 
         mPhotoView = (ImageView) v.findViewById(R.id.note_photo);
-//        if (mPhotoFile.exists()) {
-//            updatePhotoView();
-//        } else {
-//            mPhotoView.setVisibility(View.GONE);
-//        }
-        //вместо предыдущих строчек внес в updatePhotoView
         updatePhotoView();
 
 
@@ -189,7 +185,7 @@ public class NoteFragment extends Fragment {
 //                mCapturePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mUriPhotoFile);
 //                startActivityForResult(mCapturePhotoIntent, REQUEST_PHOTO);
 
-                AlertDialog.Builder photoAlertDialog = new AlertDialog.Builder(getActivity());
+                final AlertDialog.Builder photoAlertDialog = new AlertDialog.Builder(getActivity());
                 photoAlertDialog.setTitle(R.string.alert_on_photo_title);
                 photoAlertDialog.setPositiveButton(R.string.alert_on_photo_cam, new DialogInterface.OnClickListener() {
                     @Override
@@ -201,7 +197,10 @@ public class NoteFragment extends Fragment {
                 photoAlertDialog.setNegativeButton(R.string.alert_on_photo_gallery, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //add gallery intent
+                        //add gallery intent *****************-------------------******************------------------////////////////
+                        Toast toast = Toast.makeText(getActivity(),
+                                "will be available in feature release", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 });
 
@@ -302,7 +301,6 @@ public class NoteFragment extends Fragment {
         if (requestCode == REQUEST_PHOTO) {
             updatePhotoView();
         }
-
 //        super.onActivityResult(requestCode, resultCode, data);
     }
 
