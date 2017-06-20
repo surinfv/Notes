@@ -18,17 +18,16 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fed.notes.utils.ImageDialog;
 import com.fed.notes.utils.PictureUtils;
@@ -36,13 +35,21 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+
+import static java.lang.System.in;
+import static java.lang.System.out;
 
 /**
  * Created by f on 05.05.2017.
@@ -64,7 +71,8 @@ public class NoteFragment extends Fragment {
 
 
     public static final String ARGS_NOTE_ID = "argsnoteid";
-    public static final int REQUEST_PHOTO = 0;
+    public static final int REQUEST_PHOTO_CAM = 0;
+    public static final int REQUEST_PHOTO_GAL = 1;
 
 
     public static NoteFragment newInstance(UUID id) {
@@ -155,7 +163,6 @@ public class NoteFragment extends Fragment {
         mPhotoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // тут надо открыть DialogFragment с картинкой
                 FragmentManager manager = getFragmentManager();
                 ImageDialog dialog = ImageDialog.newInstance(mPhotoFile.getPath());
                 dialog.show(manager, "IMAGE_FULL");
@@ -180,10 +187,6 @@ public class NoteFragment extends Fragment {
         switch (item.getItemId()) {
 
             case R.id.menu_item_take_photo:
-//                Uri uri = Uri.fromFile(mPhotoFile);
-//                Uri uri = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", mPhotoFile);
-//                mCapturePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mUriPhotoFile);
-//                startActivityForResult(mCapturePhotoIntent, REQUEST_PHOTO);
 
                 final AlertDialog.Builder photoAlertDialog = new AlertDialog.Builder(getActivity());
                 photoAlertDialog.setTitle(R.string.alert_on_photo_title);
@@ -191,16 +194,15 @@ public class NoteFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mCapturePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mUriPhotoFile);
-                        startActivityForResult(mCapturePhotoIntent, REQUEST_PHOTO);
+                        startActivityForResult(mCapturePhotoIntent, REQUEST_PHOTO_CAM);
                     }
                 });
                 photoAlertDialog.setNegativeButton(R.string.alert_on_photo_gallery, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //add gallery intent *****************-------------------******************------------------////////////////
-                        Toast toast = Toast.makeText(getActivity(),
-                                "will be available in feature release", Toast.LENGTH_SHORT);
-                        toast.show();
+                        Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                        photoPickerIntent.setType("image/*");
+                        startActivityForResult(photoPickerIntent, REQUEST_PHOTO_GAL);
                     }
                 });
 
@@ -298,10 +300,37 @@ public class NoteFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) return;
-        if (requestCode == REQUEST_PHOTO) {
+        if (requestCode == REQUEST_PHOTO_CAM) {
             updatePhotoView();
         }
-//        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_PHOTO_GAL){
+            //тут по полученному УРИ пишем в файл картику
+            Uri imgUri = data.getData();
+
+            final int chunkSize = 1024;
+            byte[] imageData = new byte[chunkSize];
+
+            try {
+                InputStream in = getActivity().getContentResolver().openInputStream(imgUri);
+                OutputStream out = new FileOutputStream(mPhotoFile);
+
+                int bytesRead;
+                while ((bytesRead = in.read(imageData)) > 0) {
+                    out.write(Arrays.copyOfRange(imageData, 0, Math.max(0, bytesRead)));
+                }
+
+            } catch (Exception ex) {
+                Log.e("Something wrong.", String.valueOf(ex));
+            } finally {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                out.close();
+            }
+            updatePhotoView();
+        }
     }
 
 

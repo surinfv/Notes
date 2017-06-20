@@ -6,7 +6,7 @@
     <string name="menu_new_note">new note</string>
 
     <string name="menu_send_via_email">send note</string>
-    <string name="menu_take_photo">take photo</string>
+    <string name="menu_take_photo">image</string>
     <string name="menu_delete_note">delete note</string>
 
     <string name="alert_on_del_title">Delete note</string>
@@ -17,8 +17,8 @@
     <string name="alert_on_photo_title">photo</string>
     <string name="alert_on_photo_text_first_photo">Do you want get new photo?</string>
     <string name="alert_on_photo_text_second_photo">Do you want get new photo or remove this one ?</string>
-    <string name="alert_on_photo_cam">from cam</string>
-    <string name="alert_on_photo_gallery">from gallery</string>
+    <string name="alert_on_photo_cam">get new photo</string>
+    <string name="alert_on_photo_gallery">choose from gallery</string>
     <string name="alert_on_photo_remove">remove photo</string>
 
     <string name="alert_del_photo_title">remove photo?</string>
