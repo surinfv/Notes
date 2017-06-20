@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">Notes</string>
-    <string name="note_name">Note</string>
+    <string name="note_name"></string>
+
     <string name="date_format">H:mm EEEE, d MMM yyyy</string>
+
+    <string name="note_title_hint">title</string>
+    <string name="note_comment_hint">enter comment here</string>
 
     <string name="menu_new_note">new note</string>
 
@@ -15,7 +19,7 @@
     <string name="alert_on_del_cancel">cancel</string>
 
     <string name="alert_on_photo_title">photo</string>
-    <string name="alert_on_photo_text_first_photo">Do you want get new photo?</string>
+    <string name="alert_on_photo_text_first_photo">Do you want add photo?</string>
     <string name="alert_on_photo_text_second_photo">Do you want get new photo or remove this one ?</string>
     <string name="alert_on_photo_cam">get new photo</string>
     <string name="alert_on_photo_gallery">choose from gallery</string>

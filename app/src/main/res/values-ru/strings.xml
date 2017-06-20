@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Заметки</string>
+    <string name="alert_del_photo_no">нет</string>
+    <string name="alert_del_photo_text">уверены?</string>
+    <string name="alert_del_photo_title">удалить фото?</string>
+    <string name="alert_del_photo_yes">угу</string>
+    <string name="alert_on_del_cancel">отмена</string>
+    <string name="alert_on_del_text">Вы уверены?</string>
+    <string name="alert_on_del_title">удалить заметку</string>
+    <string name="alert_on_del_yes">да</string>
+    <string name="alert_on_photo_cam">сделать новое</string>
+    <string name="alert_on_photo_gallery">выбрать из галереи</string>
+    <string name="alert_on_photo_remove">удалить фото</string>
+    <string name="alert_on_photo_text_first_photo">добавить фото?</string>
+    <string name="alert_on_photo_text_second_photo">добавить новое или удалить?</string>
+    <string name="alert_on_photo_title">фото</string>
+    <string name="menu_delete_note">удалить заметку</string>
+    <string name="menu_new_note">новая</string>
+    <string name="menu_send_via_email">отправить</string>
+    <string name="menu_take_photo">изображение</string>
+    <string name="note_comment_hint">введите комментарий</string>
+    <string name="note_title_hint">название</string>
+    <string name="date_format" translatable="false">H:mm , d MM yyyy</string>
+</resources>
