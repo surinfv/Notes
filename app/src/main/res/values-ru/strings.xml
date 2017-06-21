@@ -21,5 +21,9 @@
     <string name="menu_take_photo">изображение</string>
     <string name="note_comment_hint">введите комментарий</string>
     <string name="note_title_hint">название</string>
-    <string name="date_format" translatable="false">H:mm , d MM yyyy</string>
+    <string name="date_format" translatable="false">H:mm , d/MM/yyyy</string>
+    <string name="email_text">"из приложения Заметки: "</string>
+    <string name="snackbar_undo">ОТМЕНА</string>
+    <string name="snackbar_delete">" удалено"</string>
+    <string name="snackbar_return">" вернули"</string>
 </resources>

@@ -29,4 +29,9 @@
     <string name="alert_del_photo_text">are you sure?</string>
     <string name="alert_del_photo_yes">yep</string>
     <string name="alert_del_photo_no">nope</string>
+
+    <string name="email_text">"from Note app: "</string>
+    <string name="snackbar_undo">UNDO</string>
+    <string name="snackbar_delete">" removed"</string>
+    <string name="snackbar_return">" returned"</string>
 </resources>

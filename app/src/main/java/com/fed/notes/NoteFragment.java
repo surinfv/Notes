@@ -241,14 +241,14 @@ public class NoteFragment extends Fragment {
                     intent = ShareCompat.IntentBuilder.from(getActivity())
                             .setType("plain/text")
 //                            .setType("image/*")
-                            .setSubject("from Note app: " + mNote.getTitle())
+                            .setSubject(getResources().getString(R.string.email_text) + mNote.getTitle())
                             .setText(mNote.getDescription())
                             .setStream(mUriPhotoFile)
                             .getIntent();
                 } else {
                     intent = ShareCompat.IntentBuilder.from(getActivity())
                             .setType("plain/text")
-                            .setSubject("from Note app: " + mNote.getTitle())
+                            .setSubject(getResources().getString(R.string.email_text) + mNote.getTitle())
                             .setText(mNote.getDescription())
                             .getIntent();
                 }

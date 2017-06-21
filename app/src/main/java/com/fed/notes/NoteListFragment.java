@@ -172,10 +172,10 @@ public class NoteListFragment extends Fragment {
             mNotesOrder.remove(position);
             notifyItemRemoved(position);
 
-            Snackbar mSnackBar = Snackbar.make(mNoteRecyclerView, mNoteTmp.getTitle() + " removed", Snackbar.LENGTH_LONG);
+            Snackbar mSnackBar = Snackbar.make(mNoteRecyclerView, mNoteTmp.getTitle() + getResources().getString(R.string.snackbar_delete), Snackbar.LENGTH_LONG);
             View snackbarView = mSnackBar.getView();
             snackbarView.setBackgroundColor(getResources().getColor(R.color.snack_bar_background));
-            mSnackBar.setAction("UNDO", snackbarOnClickListener);
+            mSnackBar.setAction(getResources().getString(R.string.snackbar_undo), snackbarOnClickListener);
             mSnackBar.show();
 
             mSnackBar.addCallback(new Snackbar.Callback() {
@@ -197,7 +197,7 @@ public class NoteListFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 ///вернуть удаленную заметку на место
-                Toast.makeText(getActivity(), "returned", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), mNoteTmp.getTitle() + getResources().getString(R.string.snackbar_return), Toast.LENGTH_SHORT).show();
                 mNotes.add(mNoteTmpPos, mNoteTmp);
                 mNotesOrder.add(mNoteTmpPos, mNoteTmp.getId());
                 notifyItemInserted(mNoteTmpPos);
