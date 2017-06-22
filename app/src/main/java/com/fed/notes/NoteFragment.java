@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.fed.notes.utils.EditTextModif;
 import com.fed.notes.utils.ImageDialog;
 import com.fed.notes.utils.PictureUtils;
 import com.google.gson.Gson;
@@ -58,8 +59,8 @@ import static java.lang.System.out;
 public class NoteFragment extends Fragment {
     private Note mNote;
 
-    private EditText mNoteTitleField;
-    private EditText mNoteDescriptionField;
+    private EditTextModif mNoteTitleField;
+    private EditTextModif mNoteDescriptionField;
     private TextView mDate;
     private DateFormat mDateFormat;
 
@@ -114,7 +115,7 @@ public class NoteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_note, container, false);
 
-        mNoteTitleField = (EditText) v.findViewById(R.id.note_title);
+        mNoteTitleField = (EditTextModif) v.findViewById(R.id.note_title);
         mNoteTitleField.setText(mNote.getTitle());
         mNoteTitleField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -133,7 +134,7 @@ public class NoteFragment extends Fragment {
             }
         });
 
-        mNoteDescriptionField = (EditText) v.findViewById(R.id.note_description);
+        mNoteDescriptionField = (EditTextModif) v.findViewById(R.id.note_description);
         mNoteDescriptionField.setText(mNote.getDescription());
         mNoteDescriptionField.addTextChangedListener(new TextWatcher() {
             @Override
