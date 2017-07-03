@@ -26,4 +26,6 @@
     <string name="snackbar_undo">ОТМЕНА</string>
     <string name="snackbar_delete">" удалено"</string>
     <string name="snackbar_return">" вернули"</string>
+    <string name="email_intent_title">Почтовое приложение</string>
+    <string name="email_intent_text">Похоже, что у Вас нет почтового приложения, или оно ещё не настроено.</string>
 </resources>

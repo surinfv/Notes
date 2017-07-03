@@ -9,6 +9,8 @@
 
     <string name="menu_new_note">new note</string>
 
+    <string name="ok_button">ok</string>
+
     <string name="menu_send_via_email">send note</string>
     <string name="menu_take_photo">image</string>
     <string name="menu_delete_note">delete note</string>
@@ -34,4 +36,7 @@
     <string name="snackbar_undo">UNDO</string>
     <string name="snackbar_delete">" removed"</string>
     <string name="snackbar_return">" returned"</string>
+
+    <string name="email_intent_title">E-mail application</string>
+    <string name="email_intent_text">It looks like you do not have an application to send mail, or you have not logged in to it.</string>
 </resources>

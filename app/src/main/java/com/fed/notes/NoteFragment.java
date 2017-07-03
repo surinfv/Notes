@@ -256,6 +256,16 @@ public class NoteFragment extends Fragment {
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
                     startActivity(intent);
 //                    startActivity(Intent.createChooser(intent, "send via..."));
+                } else {
+                    AlertDialog.Builder eMailIntentAlertDialog = new AlertDialog.Builder(getActivity());
+                    eMailIntentAlertDialog.setTitle(R.string.email_intent_title);
+                    eMailIntentAlertDialog.setMessage(R.string.email_intent_text);
+                    eMailIntentAlertDialog.setNeutralButton(R.string.ok_button, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    eMailIntentAlertDialog.show();
                 }
                 return true;
 
