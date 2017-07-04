@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -98,7 +99,11 @@ public class NoteFragment extends Fragment {
         mCanTakePhoto = mPhotoFile != null &&
                 mCapturePhotoIntent.resolveActivity(packageManager) != null;
 
-        mUriPhotoFile = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", mPhotoFile);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            mUriPhotoFile = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", mPhotoFile);
+        } else {
+            mUriPhotoFile = Uri.fromFile(mPhotoFile);
+        }
 
         setHasOptionsMenu(true);
     }

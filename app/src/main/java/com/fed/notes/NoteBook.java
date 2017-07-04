@@ -119,8 +119,14 @@ class NoteBook {
     }
 
     public File getPhotoFile(Note note) {
-        //проверяем доступность внешнего хранилища
-        File externalFileDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        //проверяем доступность внешнего хранилища, если не доступно то пользуемся внутренним
+        File externalFileDir;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            externalFileDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        } else {
+            externalFileDir = mContext.getFilesDir();
+        }
+
         if (externalFileDir == null) return null;
 
         return new File(externalFileDir, note.getPhotoFilename());
