@@ -99,7 +99,7 @@ public class NoteFragment extends Fragment {
         mCanTakePhoto = mPhotoFile != null &&
                 mCapturePhotoIntent.resolveActivity(packageManager) != null;
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT > 23) {
             mUriPhotoFile = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", mPhotoFile);
         } else {
             mUriPhotoFile = Uri.fromFile(mPhotoFile);
