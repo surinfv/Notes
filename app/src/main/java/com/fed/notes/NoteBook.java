@@ -131,11 +131,4 @@ class NoteBook {
 
         return new File(externalFileDir, note.getPhotoFilename());
     }
-
-//    public int getPosition(Note note) {
-//        for (int i = 0, p = mNotes.size(); i < p; i++) {
-//            if (note.equals(mNotes.get(i))) return i;
-//        }
-//        return 0;//bad deal
-//    }
 }
