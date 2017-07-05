@@ -40,6 +40,7 @@ public class PictureUtils {
 
         options = new BitmapFactory.Options();
         options.inSampleSize = inSampleSize;
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
 
         //чтение данных и создание итгового изображения
         return BitmapFactory.decodeFile(path, options);
