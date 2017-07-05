@@ -20,6 +20,11 @@ public class PictureUtils {
         float scrWidth = options.outWidth;
         float scrHeigth = options.outHeight;
 
+//        Log.e("LOOKscrWidth", "" + scrWidth);
+//        Log.e("LOOKscrHeight", "" + scrHeigth);
+//        Log.e("LOOKdestWidth", "" + destWidth);
+//        Log.e("LOOKdestHeight", "" + destHeight);
+
         //вычисление степени масштабирования
         int inSampleSize = 1;
         if (scrHeigth > destHeight || scrWidth > destWidth){
@@ -29,6 +34,9 @@ public class PictureUtils {
                 inSampleSize = Math.round(scrWidth / destWidth);
             }
         }
+        inSampleSize*=2;
+
+//        Log.e("LOOKSampleSize", "" + inSampleSize);
 
         options = new BitmapFactory.Options();
         options.inSampleSize = inSampleSize;
