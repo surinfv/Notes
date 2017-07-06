@@ -6,10 +6,10 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:scaleType="fitCenter"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:srcCompat="@android:color/darker_gray"
+        android:layout_marginBottom="12dp"
+        android:scaleType="centerInside"
 
-        />
+        app:srcCompat="@android:color/darker_gray"/>
 </FrameLayout>

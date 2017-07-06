@@ -11,6 +11,12 @@ import android.graphics.Point;
 
 public class PictureUtils {
 
+    public static Bitmap getScaledBitmap(String path, Activity activity){
+        Point size = new Point();
+        activity.getWindowManager().getDefaultDisplay().getSize(size);
+        return getScaledBitmap(path, size.x, size.y);
+    }
+
     public static Bitmap getScaledBitmap(String path, int destWidth, int destHeight){
         //чтение размеров картинки на диске
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -44,11 +50,5 @@ public class PictureUtils {
 
         //чтение данных и создание итгового изображения
         return BitmapFactory.decodeFile(path, options);
-    }
-
-    public static Bitmap getScaledBitmap(String path, Activity activity){
-        Point size = new Point();
-        activity.getWindowManager().getDefaultDisplay().getSize(size);
-        return getScaledBitmap(path, size.x, size.y);
     }
 }
