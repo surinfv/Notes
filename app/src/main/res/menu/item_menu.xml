@@ -8,7 +8,7 @@
         app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_item_send_via_email"
-        android:icon="@drawable/ic_send_note_via_email"
+        android:icon="@drawable/ic_send_email"
         android:title="@string/menu_send_via_email"
         app:showAsAction="ifRoom|withText"/>
     <item
