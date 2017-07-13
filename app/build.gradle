@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'learningApps'
+            keyPassword 'noobik'
+            storeFile file('C:/Users/f/Dropbox/android/AndroidKeyStore.jks')
+            storePassword 'noobik'
+        }
+    }
     compileSdkVersion 26
     buildToolsVersion "25.0.3"
     defaultConfig {
@@ -15,6 +23,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        debug {
+            signingConfig signingConfigs.config
         }
     }
 }
