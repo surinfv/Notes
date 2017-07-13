@@ -1,15 +1,15 @@
 <resources>
     <string name="app_name">Notes</string>
-    <string name="note_name"></string>
+    <string name="note_name" translatable="false">\"\"</string>
 
-    <string name="date_format">H:mm EEEE, d MMM yyyy</string>
+    <string name="date_format" translatable="true">H:mm EEEE, d MMM yyyy</string>
 
     <string name="note_title_hint">title</string>
     <string name="note_comment_hint">enter comment here</string>
 
     <string name="menu_new_note">new note</string>
 
-    <string name="ok_button">ok</string>
+    <string name="ok_button" translatable="false">ok</string>
 
     <string name="menu_send_via_email">send note</string>
     <string name="menu_take_photo">image</string>
