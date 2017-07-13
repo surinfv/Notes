@@ -33,7 +33,7 @@
         </activity>
 
         <activity android:name=".NoteActivity"
-                  android:label="@string/note_name"
+                  android:label=""
                   android:parentActivityName=".NoteListActivity"
             >
             <intent-filter>
