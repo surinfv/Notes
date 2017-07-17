@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Notes</string>
+    <string name="app_name">Simple Notes App</string>
 
     <string name="date_format" translatable="true">H:mm EEEE, d MMM yyyy</string>
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Заметки</string>
+    <string name="app_name">Просто Заметки</string>
     <string name="alert_del_photo_no">нет</string>
     <string name="alert_del_photo_text">уверены?</string>
     <string name="alert_del_photo_title">удалить фото?</string>
