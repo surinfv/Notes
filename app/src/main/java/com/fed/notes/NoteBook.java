@@ -32,14 +32,6 @@ class NoteBook {
     private NoteBook(Context context) {
         mContext = context.getApplicationContext();
         mDatabase = new NoteBaseHelper(mContext).getWritableDatabase();
-
-        //тестовые записи
-//        for (int i = 0; i < 10; i++) {
-//            Note note = new Note();
-//            note.setTitle("Test Note # " + i);
-//            note.setDescription("This is a long multiple string for describe the note, and repeat this string one more time - This is a long multiple string for describe the note, and repeat this string one more time " + i);
-//            mNotes.add(0, note);
-//        }
     }
 
     public void addNote(Note note) {
@@ -51,7 +43,7 @@ class NoteBook {
         mDatabase.delete(NoteTable.TABLE_NAME,
                 NoteTable.Columns.UUID + "= ?",
                 new String[]{note.getId().toString()});
-        getPhotoFile(note).delete();// попробовал удалить фото при удалении заметки
+        getPhotoFile(note).delete();
 
         //удаление из orderList
         UUID id = note.getId();
@@ -64,7 +56,7 @@ class NoteBook {
 
         try {
             cursor.moveToFirst();
-            while (!cursor.isAfterLast()){
+            while (!cursor.isAfterLast()) {
                 notes.add(cursor.getNote());
                 cursor.moveToNext();
             }
@@ -77,7 +69,7 @@ class NoteBook {
     public Note getNote(UUID id) {
         NoteCursorWrapper cursor = queryNotes(
                 NoteTable.Columns.UUID + " = ?",
-                new String[] { id.toString()}
+                new String[]{id.toString()}
         );
         try {
             if (cursor.getCount() == 0) {
@@ -119,7 +111,6 @@ class NoteBook {
     }
 
     public File getPhotoFile(Note note) {
-        //проверяем доступность внешнего хранилища, если не доступно то пользуемся внутренним
         File externalFileDir;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             externalFileDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);

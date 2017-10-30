@@ -39,12 +39,12 @@ import java.util.UUID;
 
 public class NoteListFragment extends Fragment {
 
+    public static final String NOTES_ORDER = "notesoreder";
     private RecyclerView mNoteRecyclerView;
     private NoteAdapter mAdapter;
-    private ItemTouchHelper mItemTouchHelper;
 
+    private ItemTouchHelper mItemTouchHelper;
     SharedPreferences mShPref;
-    public static final String NOTES_ORDER = "notesoreder";
     private List<UUID> mNotesOrder;
 
     @Override
@@ -54,16 +54,13 @@ public class NoteListFragment extends Fragment {
     }
 
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        if (savedInstanceState != null) {
-//        }
 
         View view = inflater.inflate(R.layout.fragment_note_list, container, false);
 
-        mNoteRecyclerView = (RecyclerView) view.findViewById(R.id.note_recycler_view);
+        mNoteRecyclerView = view.findViewById(R.id.note_recycler_view);
         mNoteRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
 
@@ -80,7 +77,7 @@ public class NoteListFragment extends Fragment {
         mItemTouchHelper.attachToRecyclerView(mNoteRecyclerView);
     }
 
-    private class NoteHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    private class NoteHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView mItemTitle;
 
@@ -92,12 +89,13 @@ public class NoteListFragment extends Fragment {
             super(itemView);
             itemView.setOnClickListener(this);
 
-            mItemTitle = (TextView) itemView.findViewById(R.id.item_list_title);
-            mItemDescription = (TextView) itemView.findViewById(R.id.item_list_description);
-            mItemDate = (TextView) itemView.findViewById(R.id.item_list_date);
+            mItemTitle = itemView.findViewById(R.id.item_list_title);
+            mItemDescription = itemView.findViewById(R.id.item_list_description);
+            mItemDate = itemView.findViewById(R.id.item_list_date);
         }
 
         public void bindNote(Note note) {
+            if (note == null) return;
             mNote = note;
             mItemTitle.setText(mNote.getTitle());
             mItemDescription.setText(mNote.getDescription());
@@ -119,6 +117,7 @@ public class NoteListFragment extends Fragment {
         private int mNoteTmpPos;
 
         private List<Note> mNotes;
+
         public NoteAdapter(List<Note> notes) {
             mNotes = notes;
         }
@@ -164,10 +163,8 @@ public class NoteListFragment extends Fragment {
 
         @Override
         public void onItemDismiss(int position) {
-            //сохранить заметку во временный экземпляр и её позицию
             cloneNote(mNotes.get(position), position);
 
-//            NoteBook.get(getActivity()).deleteNote(mNotes.get(position));
             mNotes.remove(position);
             mNotesOrder.remove(position);
             notifyItemRemoved(position);
@@ -179,18 +176,18 @@ public class NoteListFragment extends Fragment {
             mSnackBar.show();
 
             mSnackBar.addCallback(new Snackbar.Callback() {
-                        @Override
-                        public void onDismissed(Snackbar snackbar, int event) {
-                            if (event != Snackbar.Callback.DISMISS_EVENT_ACTION) {
-                                NoteBook.get(getActivity()).deleteNote(mNoteTmp);
-                            }
-                        }
+                @Override
+                public void onDismissed(Snackbar snackbar, int event) {
+                    if (event != Snackbar.Callback.DISMISS_EVENT_ACTION) {
+                        NoteBook.get(getActivity()).deleteNote(mNoteTmp);
+                    }
+                }
 
 //                        @Override
 //                        public void onShown(Snackbar snackbar) {
 //                            Toast.makeText(getActivity(), "Snackbar is showed", Toast.LENGTH_SHORT).show();
 //                        }
-                    });
+            });
         }
 
         View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
@@ -286,7 +283,8 @@ public class NoteListFragment extends Fragment {
         String json = mShPref.getString(NOTES_ORDER, "");
         if (!json.equals("")) {
             Gson gson = new Gson();
-            Type listType = new TypeToken<ArrayList<UUID>>(){}.getType();
+            Type listType = new TypeToken<ArrayList<UUID>>() {
+            }.getType();
             mNotesOrder = gson.fromJson(json, listType);
         }
     }

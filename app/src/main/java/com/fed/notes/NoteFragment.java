@@ -119,7 +119,7 @@ public class NoteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_note, container, false);
 
-        mNoteTitleField = (EditTextModif) v.findViewById(R.id.note_title);
+        mNoteTitleField = v.findViewById(R.id.note_title);
         mNoteTitleField.setText(mNote.getTitle());
         mNoteTitleField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -138,7 +138,7 @@ public class NoteFragment extends Fragment {
             }
         });
 
-        mNoteDescriptionField = (EditTextModif) v.findViewById(R.id.note_description);
+        mNoteDescriptionField = v.findViewById(R.id.note_description);
         mNoteDescriptionField.setText(mNote.getDescription());
         mNoteDescriptionField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -157,11 +157,11 @@ public class NoteFragment extends Fragment {
             }
         });
 
-        mDate = (TextView) v.findViewById(R.id.create_date);
+        mDate = v.findViewById(R.id.create_date);
         mDateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
         mDate.setText(mDateFormat.format(mNote.getDate()));
 
-        mPhotoView = (ImageView) v.findViewById(R.id.note_photo);
+        mPhotoView = v.findViewById(R.id.note_photo);
         updatePhotoView();
 
 

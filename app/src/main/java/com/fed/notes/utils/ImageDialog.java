@@ -43,7 +43,7 @@ public class ImageDialog extends DialogFragment {
 
         Bitmap bitmap = PictureUtils.getScaledBitmap(mPath, getActivity());
 
-        mImageView = (ImageView) dialog.findViewById(R.id.imageView);
+        mImageView = dialog.findViewById(R.id.imageView);
         mImageView.setImageBitmap(bitmap);
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
