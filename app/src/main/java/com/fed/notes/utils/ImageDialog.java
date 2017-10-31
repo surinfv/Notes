@@ -21,8 +21,8 @@ import com.fed.notes.R;
 public class ImageDialog extends DialogFragment {
     private static final String IMAGEPATH = "imagepath";
 
-    private String mPath;
-    private ImageView mImageView;
+    private String path;
+    private ImageView imageView;
 
     public static ImageDialog newInstance(String path){
         Bundle args = new Bundle();
@@ -36,16 +36,16 @@ public class ImageDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        mPath = getArguments().getSerializable(IMAGEPATH).toString();
+        path = getArguments().getSerializable(IMAGEPATH).toString();
 
         Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.image_dialog);
 
-        Bitmap bitmap = PictureUtils.getScaledBitmap(mPath, getActivity());
+        Bitmap bitmap = PictureUtils.getScaledBitmap(path, getActivity());
 
-        mImageView = dialog.findViewById(R.id.imageView);
-        mImageView.setImageBitmap(bitmap);
-        mImageView.setOnClickListener(new View.OnClickListener() {
+        imageView = dialog.findViewById(R.id.imageView);
+        imageView.setImageBitmap(bitmap);
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();

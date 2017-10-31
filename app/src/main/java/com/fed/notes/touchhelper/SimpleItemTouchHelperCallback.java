@@ -35,10 +35,10 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     public static final float ALPHA_FULL = 1.0f;
 
-    private final ItemTouchHelperAdapter mAdapter;
+    private final ItemTouchHelperAdapter adapter;
 
     public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
-        mAdapter = adapter;
+        this.adapter = adapter;
     }
 
     @Override
@@ -72,14 +72,14 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
         }
 
         // Notify the adapter of the move
-        mAdapter.onItemMove(source.getAdapterPosition(), target.getAdapterPosition());
+        adapter.onItemMove(source.getAdapterPosition(), target.getAdapterPosition());
         return true;
     }
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int i) {
         // Notify the adapter of the dismissal
-        mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        adapter.onItemDismiss(viewHolder.getAdapterPosition());
     }
 
     @Override

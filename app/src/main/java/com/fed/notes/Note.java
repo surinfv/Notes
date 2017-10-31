@@ -24,42 +24,10 @@ public class Note {
         this(UUID.randomUUID());
     }
 
-    public Note(UUID id) {
+    private Note(@NonNull UUID id) {
         this.id = id;
         date = new Date();
     }
-
-//    public UUID getId() {
-//        return id;
-//    }
-//
-//    public void setId(UUID id) {
-//        id = id;
-//    }
-//
-//    public String getTitle() {
-//        return title;
-//    }
-//
-//    public void setTitle(String title) {
-//        title = title;
-//    }
-//
-//    public String getDescription() {
-//        return description;
-//    }
-//
-//    public void setDescription(String description) {
-//        description = description;
-//    }
-//
-//    public Date getDate() {
-//        return date;
-//    }
-//
-//    public void setDate(long date) {
-//        date = new Date(date);
-//    }
 
     public String getPhotoFilename() {
         return "IMG_" + id.toString() + ".jpg";

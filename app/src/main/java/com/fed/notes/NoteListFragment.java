@@ -43,12 +43,12 @@ import java.util.UUID;
 public class NoteListFragment extends Fragment {
 
     public static final String NOTES_ORDER = "notesoreder";
-    private RecyclerView mNoteRecyclerView;
-    private NoteAdapter mAdapter;
+    private RecyclerView noteRecyclerView;
+    private NoteAdapter adapter;
 
-    private ItemTouchHelper mItemTouchHelper;
-    SharedPreferences mShPref;
-    private List<UUID> mNotesOrder;
+    private ItemTouchHelper itemTouchHelper;
+    SharedPreferences shPref;
+    private List<UUID> notesOrder;
 
     private AppDatabase db;
     private NoteDAO noteDAO;
@@ -61,15 +61,14 @@ public class NoteListFragment extends Fragment {
         noteDAO = db.getNoteDao();
     }
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_note_list, container, false);
 
-        mNoteRecyclerView = view.findViewById(R.id.note_recycler_view);
-        mNoteRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        noteRecyclerView = view.findViewById(R.id.note_recycler_view);
+        noteRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
 
         updateUI();
@@ -80,40 +79,39 @@ public class NoteListFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
-        mItemTouchHelper = new ItemTouchHelper(callback);
-        mItemTouchHelper.attachToRecyclerView(mNoteRecyclerView);
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
+        itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(noteRecyclerView);
     }
 
     private class NoteHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView mItemTitle;
-
-        private TextView mItemDescription;
-        private TextView mItemDate;
-        private Note mNote;
+        private TextView itemTitle;
+        private TextView itemDescription;
+        private TextView itemDate;
+        private Note note;
 
         public NoteHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
 
-            mItemTitle = itemView.findViewById(R.id.item_list_title);
-            mItemDescription = itemView.findViewById(R.id.item_list_description);
-            mItemDate = itemView.findViewById(R.id.item_list_date);
+            itemTitle = itemView.findViewById(R.id.item_list_title);
+            itemDescription = itemView.findViewById(R.id.item_list_description);
+            itemDate = itemView.findViewById(R.id.item_list_date);
         }
 
         public void bindNote(Note note) {
             if (note == null) return;
-            mNote = note;
-            mItemTitle.setText(mNote.title);
-            mItemDescription.setText(mNote.description);
+            this.note = note;
+            itemTitle.setText(this.note.title);
+            itemDescription.setText(this.note.description);
             DateFormat dateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
-            mItemDate.setText(dateFormat.format(mNote.date));
+            itemDate.setText(dateFormat.format(this.note.date));
         }
 
         @Override
         public void onClick(View v) {
-            Intent intent = NoteActivity.newIntent(getActivity(), mNote.id);
+            Intent intent = NoteActivity.newIntent(getActivity(), note.id);
             startActivity(intent);
         }
 
@@ -121,13 +119,13 @@ public class NoteListFragment extends Fragment {
 
     private class NoteAdapter extends RecyclerView.Adapter<NoteHolder> implements ItemTouchHelperAdapter {
 
-        private Note mNoteTmp;
-        private int mNoteTmpPos;
+        private Note noteTmp;
+        private int noteTmpPos;
 
-        private List<Note> mNotes;
+        private List<Note> notes;
 
         public NoteAdapter(List<Note> notes) {
-            mNotes = notes;
+            this.notes = notes;
         }
 
         @Override
@@ -139,49 +137,45 @@ public class NoteListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(NoteHolder holder, int position) {
-            Note note = mNotes.get(position);
+            Note note = notes.get(position);
             holder.bindNote(note);
         }
 
         @Override
         public int getItemCount() {
-            return mNotes.size();
+            return notes.size();
         }
 
         public void setNotes(List<Note> notes) {
-            mNotes = notes;
+            this.notes = notes;
         }
 
         @Override
         public boolean onItemMove(int fromPosition, int toPosition) {
-            Log.i("temp", "before swap - " + mNotesOrder.toString());
-            Log.i("temp", "before swap - " + mNotes.toString());
             if (fromPosition < toPosition) {
                 for (int i = fromPosition; i < toPosition; i++) {
-                    Collections.swap(mNotes, i, i + 1);
-                    Collections.swap(mNotesOrder, i, i + 1);
+                    Collections.swap(notes, i, i + 1);
+                    Collections.swap(notesOrder, i, i + 1);
                 }
             } else {
                 for (int i = fromPosition; i > toPosition; i--) {
-                    Collections.swap(mNotes, i, i - 1);
-                    Collections.swap(mNotesOrder, i, i - 1);
+                    Collections.swap(notes, i, i - 1);
+                    Collections.swap(notesOrder, i, i - 1);
                 }
             }
             notifyItemMoved(fromPosition, toPosition);
-            Log.i("temp", "after swap - " + mNotesOrder.toString());
-            Log.i("temp", "after swap - " + mNotes.toString());
             return true;
         }
 
         @Override
         public void onItemDismiss(int position) {
-            cloneNote(mNotes.get(position), position);
+            cloneNote(notes.get(position), position);
 
-            mNotes.remove(position);
-            mNotesOrder.remove(position);
+            notes.remove(position);
+            notesOrder.remove(position);
             notifyItemRemoved(position);
 
-            Snackbar mSnackBar = Snackbar.make(mNoteRecyclerView, mNoteTmp.title + getResources().getString(R.string.snackbar_delete), Snackbar.LENGTH_LONG);
+            Snackbar mSnackBar = Snackbar.make(noteRecyclerView, noteTmp.title + getResources().getString(R.string.snackbar_delete), Snackbar.LENGTH_LONG);
             View snackbarView = mSnackBar.getView();
             snackbarView.setBackgroundColor(getResources().getColor(R.color.snack_bar_background));
             mSnackBar.setAction(getResources().getString(R.string.snackbar_undo), snackbarOnClickListener);
@@ -191,8 +185,7 @@ public class NoteListFragment extends Fragment {
                 @Override
                 public void onDismissed(Snackbar snackbar, int event) {
                     if (event != Snackbar.Callback.DISMISS_EVENT_ACTION) {
-                        noteDAO.delete(mNoteTmp);
-//                        NoteBook.get(getActivity()).deleteNote(mNoteTmp);
+                        noteDAO.delete(noteTmp);
                     }
                 }
 
@@ -206,26 +199,21 @@ public class NoteListFragment extends Fragment {
         View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ///вернуть удаленную заметку на место
-                Toast.makeText(getActivity(), mNoteTmp.title + getResources().getString(R.string.snackbar_return), Toast.LENGTH_SHORT).show();
-                mNotes.add(mNoteTmpPos, mNoteTmp);
-                mNotesOrder.add(mNoteTmpPos, mNoteTmp.id);
-                notifyItemInserted(mNoteTmpPos);
+                ///return just deleted note
+                Toast.makeText(getActivity(), noteTmp.title + getResources().getString(R.string.snackbar_return), Toast.LENGTH_SHORT).show();
+                notes.add(noteTmpPos, noteTmp);
+                notesOrder.add(noteTmpPos, noteTmp.id);
+                notifyItemInserted(noteTmpPos);
             }
         };
 
         private void cloneNote(Note note, int pos) {
-            mNoteTmpPos = pos;
-            mNoteTmp = new Note();
-//            mNoteTmp.setTitle(note.title);
-//            mNoteTmp.setDescription(note.description);
-//            mNoteTmp.setId(note.id);
-//            mNoteTmp.setDate(note.date.getTime());
-
-            mNoteTmp.title = note.title;
-            mNoteTmp.description = note.description;
-            mNoteTmp.id = note.id;
-            mNoteTmp.date = note.date;
+            noteTmpPos = pos;
+            noteTmp = new Note();
+            noteTmp.title = note.title;
+            noteTmp.description = note.description;
+            noteTmp.id = note.id;
+            noteTmp.date = note.date;
 
         }
     }
@@ -239,29 +227,25 @@ public class NoteListFragment extends Fragment {
     private void updateUI() {
         loadOrder();
 
-//        NoteBook notebook = NoteBook.get(getActivity());
-
         List<Note> notes = new ArrayList<>();
-        if (mNotesOrder.size() > 0) {
-//            for (UUID id : mNotesOrder) {
-//                notes.add(noteDAO.getNote(id));
-//            }
-//            UUID[] ids = new UUID[mNotesOrder.size()];
-//            mNotesOrder.toArray(ids);
+        if (notesOrder.size() > 0) {
+            //TODO: get notes list in one query in order from orderlist
+//            UUID[] ids = new UUID[notesOrder.size()];
+//            notesOrder.toArray(ids);
 //            notes = noteDAO.getNotes(ids);
-            for (UUID id : mNotesOrder) {
-            notes.add(noteDAO.getNote(id));
+            for (UUID id : notesOrder) {
+                notes.add(noteDAO.getNote(id));
             }
         }
 
-        Log.i("temp", "save order - " + mNotesOrder.toString());
+        Log.i("temp", "save order - " + notesOrder.toString());
 
-        if (mAdapter == null) {
-            mAdapter = new NoteAdapter(notes);
-            mNoteRecyclerView.setAdapter(mAdapter);
+        if (adapter == null) {
+            adapter = new NoteAdapter(notes);
+            noteRecyclerView.setAdapter(adapter);
         } else {
-            mAdapter.setNotes(notes);
-            mAdapter.notifyDataSetChanged();
+            adapter.setNotes(notes);
+            adapter.notifyDataSetChanged();
         }
     }
 
@@ -277,9 +261,7 @@ public class NoteListFragment extends Fragment {
             case R.id.menu_item_new_note:
                 Note note = new Note();
 
-                mNotesOrder.add(0, note.id);
-
-//                NoteBook.get(getActivity()).addNote(note);
+                notesOrder.add(0, note.id);
                 noteDAO.insert(note);
                 Intent intent = NoteActivity.newIntent(getActivity(), note.id);
                 startActivity(intent);
@@ -295,29 +277,29 @@ public class NoteListFragment extends Fragment {
     }
 
     private void saveOrder() {
-        mShPref = PreferenceManager.getDefaultSharedPreferences(getContext());
-        SharedPreferences.Editor editor = mShPref.edit();
+        shPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = shPref.edit();
 
         Gson gson = new Gson();
-        String json = gson.toJson(mNotesOrder);
+        String json = gson.toJson(notesOrder);
 
         editor.putString(NOTES_ORDER, json);
         editor.apply();
 
-        Log.i("temp", "save order - " + mNotesOrder.toString());
+        Log.i("temp", "save order - " + notesOrder.toString());
     }
 
     private void loadOrder() {
-        mNotesOrder = new ArrayList<>();
-        mShPref = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String json = mShPref.getString(NOTES_ORDER, "");
+        notesOrder = new ArrayList<>();
+        shPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String json = shPref.getString(NOTES_ORDER, "");
         if (!json.equals("")) {
             Gson gson = new Gson();
             Type listType = new TypeToken<ArrayList<UUID>>() {
             }.getType();
-            mNotesOrder = gson.fromJson(json, listType);
+            notesOrder = gson.fromJson(json, listType);
         }
-        Log.i("temp", "load order - " + mNotesOrder.toString());
+        Log.i("temp", "load order - " + notesOrder.toString());
     }
 
     @Override

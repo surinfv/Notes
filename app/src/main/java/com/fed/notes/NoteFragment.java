@@ -59,24 +59,22 @@ import static java.lang.System.out;
  */
 
 public class NoteFragment extends Fragment {
-    private Note mNote;
-
-    private EditTextModif mNoteTitleField;
-    private EditTextModif mNoteDescriptionField;
-    private TextView mDate;
-    private DateFormat mDateFormat;
-
-    private ImageView mPhotoView;
-    private File mPhotoFile;
-    private boolean mCanTakePhoto;
-    private Intent mCapturePhotoIntent;
-    private Uri mUriPhotoFile;
-
-
     public static final String ARGS_NOTE_ID = "argsnoteid";
     public static final int REQUEST_PHOTO_CAM = 0;
     public static final int REQUEST_PHOTO_GAL = 1;
 
+    private Note note;
+
+    private EditTextModif noteTitleField;
+    private EditTextModif noteDescriptionField;
+    private TextView date;
+    private ImageView photoView;
+
+    private DateFormat dateFormat;
+    private File photoFile;
+    private boolean canTakePhoto;
+    private Intent capturePhotoIntent;
+    private Uri uriPhotoFile;
     private AppDatabase db;
     private NoteDAO noteDAO;
 
@@ -97,21 +95,21 @@ public class NoteFragment extends Fragment {
         noteDAO = db.getNoteDao();
         
         UUID noteID = (UUID) getArguments().getSerializable(ARGS_NOTE_ID);
-//        mNote = NoteBook.get(getActivity()).getNote(noteID);
-        mNote = noteDAO.getNote(noteID);
-//        mPhotoFile = NoteBook.get(getActivity()).getPhotoFile(mNote);
-        mPhotoFile = db.getPhotoFile(mNote);
+//        note = NoteBook.get(getActivity()).getNote(noteID);
+        note = noteDAO.getNote(noteID);
+//        photoFile = NoteBook.get(getActivity()).getPhotoFile(note);
+        photoFile = db.getPhotoFile(note);
         
         //check 4 photo:
         PackageManager packageManager = getActivity().getPackageManager();
-        mCapturePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        mCanTakePhoto = mPhotoFile != null &&
-                mCapturePhotoIntent.resolveActivity(packageManager) != null;
+        capturePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        canTakePhoto = photoFile != null &&
+                capturePhotoIntent.resolveActivity(packageManager) != null;
 
         if (Build.VERSION.SDK_INT > 23) {
-            mUriPhotoFile = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", mPhotoFile);
+            uriPhotoFile = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", photoFile);
         } else {
-            mUriPhotoFile = Uri.fromFile(mPhotoFile);
+            uriPhotoFile = Uri.fromFile(photoFile);
         }
 
         setHasOptionsMenu(true);
@@ -120,8 +118,8 @@ public class NoteFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mPhotoFile = db.getPhotoFile(mNote);
-        noteDAO.insert(mNote);
+        photoFile = db.getPhotoFile(note);
+        noteDAO.insert(note);
     }
 
     @Nullable
@@ -129,9 +127,9 @@ public class NoteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_note, container, false);
 
-        mNoteTitleField = v.findViewById(R.id.note_title);
-        mNoteTitleField.setText(mNote.title);
-        mNoteTitleField.addTextChangedListener(new TextWatcher() {
+        noteTitleField = v.findViewById(R.id.note_title);
+        noteTitleField.setText(note.title);
+        noteTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -139,7 +137,7 @@ public class NoteFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mNote.title = s.toString();
+                note.title = s.toString();
             }
 
             @Override
@@ -148,9 +146,9 @@ public class NoteFragment extends Fragment {
             }
         });
 
-        mNoteDescriptionField = v.findViewById(R.id.note_description);
-        mNoteDescriptionField.setText(mNote.description);
-        mNoteDescriptionField.addTextChangedListener(new TextWatcher() {
+        noteDescriptionField = v.findViewById(R.id.note_description);
+        noteDescriptionField.setText(note.description);
+        noteDescriptionField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -158,7 +156,7 @@ public class NoteFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mNote.description = s.toString();
+                note.description = s.toString();
             }
 
             @Override
@@ -167,19 +165,19 @@ public class NoteFragment extends Fragment {
             }
         });
 
-        mDate = v.findViewById(R.id.create_date);
-        mDateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
-        mDate.setText(mDateFormat.format(mNote.date));
+        date = v.findViewById(R.id.create_date);
+        dateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
+        date.setText(dateFormat.format(note.date));
 
-        mPhotoView = v.findViewById(R.id.note_photo);
+        photoView = v.findViewById(R.id.note_photo);
         updatePhotoView();
 
 
-        mPhotoView.setOnClickListener(new View.OnClickListener() {
+        photoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentManager manager = getFragmentManager();
-                ImageDialog dialog = ImageDialog.newInstance(mPhotoFile.getPath());
+                ImageDialog dialog = ImageDialog.newInstance(photoFile.getPath());
                 dialog.show(manager, "IMAGE_FULL");
             }
         });
@@ -193,8 +191,8 @@ public class NoteFragment extends Fragment {
         inflater.inflate(R.menu.item_menu, menu);
 
         MenuItem photoButton = menu.findItem(R.id.menu_item_take_photo);
-        photoButton.setVisible(mCanTakePhoto);
-        photoButton.setEnabled(mCanTakePhoto);
+        photoButton.setVisible(canTakePhoto);
+        photoButton.setEnabled(canTakePhoto);
     }
 
     @Override
@@ -208,8 +206,8 @@ public class NoteFragment extends Fragment {
                 photoAlertDialog.setPositiveButton(R.string.alert_on_photo_cam, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mCapturePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mUriPhotoFile);
-                        startActivityForResult(mCapturePhotoIntent, REQUEST_PHOTO_CAM);
+                        capturePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriPhotoFile);
+                        startActivityForResult(capturePhotoIntent, REQUEST_PHOTO_CAM);
                     }
                 });
                 photoAlertDialog.setNegativeButton(R.string.alert_on_photo_gallery, new DialogInterface.OnClickListener() {
@@ -221,7 +219,7 @@ public class NoteFragment extends Fragment {
                     }
                 });
 
-                if (!mPhotoFile.exists()) {
+                if (!photoFile.exists()) {
                     photoAlertDialog.setMessage(R.string.alert_on_photo_text_first_photo);
                 } else {
                     photoAlertDialog.setMessage(R.string.alert_on_photo_text_second_photo);
@@ -234,7 +232,7 @@ public class NoteFragment extends Fragment {
                             photoDelDialog.setPositiveButton(R.string.alert_del_photo_yes, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    mPhotoFile.delete();
+                                    photoFile.delete();
                                     updatePhotoView();
                                 }
                             });
@@ -252,19 +250,19 @@ public class NoteFragment extends Fragment {
 
             case R.id.menu_item_send_via_email:
                 Intent intent;
-                if (mPhotoFile.exists()) {
+                if (photoFile.exists()) {
                     intent = ShareCompat.IntentBuilder.from(getActivity())
                             .setType("plain/text")
 //                            .setType("image/*")
-                            .setSubject(getResources().getString(R.string.email_text) + mNote.title)
-                            .setText(mNote.description)
-                            .setStream(mUriPhotoFile)
+                            .setSubject(getResources().getString(R.string.email_text) + note.title)
+                            .setText(note.description)
+                            .setStream(uriPhotoFile)
                             .getIntent();
                 } else {
                     intent = ShareCompat.IntentBuilder.from(getActivity())
                             .setType("plain/text")
-                            .setSubject(getResources().getString(R.string.email_text) + mNote.title)
-                            .setText(mNote.description)
+                            .setSubject(getResources().getString(R.string.email_text) + note.title)
+                            .setText(note.description)
                             .getIntent();
                 }
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
@@ -290,9 +288,8 @@ public class NoteFragment extends Fragment {
                 deleteAlertDialog.setPositiveButton(R.string.alert_on_del_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-//                        NoteBook.get(getActivity()).deleteNote(mNote);
-                        noteDAO.delete(mNote);
-                        delFromOrderList(mNote.id);
+                        noteDAO.delete(note);
+                        delFromOrderList(note.id);
                         getActivity().finish();
                     }
                 });
@@ -330,7 +327,7 @@ public class NoteFragment extends Fragment {
             updatePhotoView();
         }
         if (requestCode == REQUEST_PHOTO_GAL){
-            //тут по полученному УРИ пишем в файл картику
+            //по полученному УРИ пишем в файл картику
             Uri imgUri = data.getData();
 
             final int chunkSize = 1024;
@@ -338,7 +335,7 @@ public class NoteFragment extends Fragment {
 
             try {
                 InputStream in = getActivity().getContentResolver().openInputStream(imgUri);
-                OutputStream out = new FileOutputStream(mPhotoFile);
+                OutputStream out = new FileOutputStream(photoFile);
 
                 int bytesRead;
                 while ((bytesRead = in.read(imageData)) > 0) {
@@ -361,13 +358,13 @@ public class NoteFragment extends Fragment {
 
 
     private void updatePhotoView() {
-        if (mPhotoFile.exists()) {
-            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
-            mPhotoView.setImageBitmap(bitmap);
-            mPhotoView.setVisibility(View.VISIBLE);
+        if (photoFile.exists()) {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(photoFile.getPath(), getActivity());
+            photoView.setImageBitmap(bitmap);
+            photoView.setVisibility(View.VISIBLE);
         } else {
-            mPhotoView.setVisibility(View.GONE);
+            photoView.setVisibility(View.GONE);
         }
-//        mPhotoView.setImageURI(Uri.fromFile(mPhotoFile));
+//        photoView.setImageURI(Uri.fromFile(photoFile));
     }
 }
