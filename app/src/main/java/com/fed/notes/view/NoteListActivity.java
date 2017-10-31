@@ -1,4 +1,4 @@
-package com.fed.notes;
+package com.fed.notes.view;
 
 import android.support.v4.app.Fragment;
 

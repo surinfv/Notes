@@ -24,7 +24,7 @@
                 android:resource="@xml/provider_paths"/>
         </provider>
         
-        <activity android:name=".NoteListActivity">
+        <activity android:name=".view.NoteListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -32,9 +32,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".NoteActivity"
+        <activity android:name=".view.NoteActivity"
                   android:label=""
-                  android:parentActivityName=".NoteListActivity"
+                  android:parentActivityName=".view.NoteListActivity"
             >
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>

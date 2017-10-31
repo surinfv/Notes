@@ -7,8 +7,6 @@ import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.os.Environment;
 
-import com.fed.notes.Note;
-
 import java.io.File;
 
 /**

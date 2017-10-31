@@ -6,12 +6,9 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
-import com.fed.notes.Note;
 
 import java.util.List;
 import java.util.UUID;
-
-import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
 /**
  * Created by Fedor SURIN on 31.10.2017.

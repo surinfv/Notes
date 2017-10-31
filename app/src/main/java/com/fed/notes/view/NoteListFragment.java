@@ -1,4 +1,4 @@
-package com.fed.notes;
+package com.fed.notes.view;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,7 +20,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fed.notes.R;
 import com.fed.notes.database.AppDatabase;
+import com.fed.notes.database.Note;
 import com.fed.notes.database.NoteDAO;
 import com.fed.notes.touchhelper.ItemTouchHelperAdapter;
 import com.fed.notes.touchhelper.SimpleItemTouchHelperCallback;

@@ -1,4 +1,4 @@
-package com.fed.notes;
+package com.fed.notes.view;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -29,7 +29,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.fed.notes.BuildConfig;
+import com.fed.notes.R;
 import com.fed.notes.database.AppDatabase;
+import com.fed.notes.database.Note;
 import com.fed.notes.database.NoteDAO;
 import com.fed.notes.utils.EditTextModif;
 import com.fed.notes.utils.ImageDialog;

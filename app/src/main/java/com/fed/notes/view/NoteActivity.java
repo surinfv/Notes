@@ -1,4 +1,4 @@
-package com.fed.notes;
+package com.fed.notes.view;
 
 import android.content.Context;
 import android.content.Intent;

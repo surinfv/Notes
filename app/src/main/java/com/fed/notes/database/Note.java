@@ -1,4 +1,4 @@
-package com.fed.notes;
+package com.fed.notes.database;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
