@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -153,6 +154,8 @@ public class NoteListFragment extends Fragment {
 
         @Override
         public boolean onItemMove(int fromPosition, int toPosition) {
+            Log.i("temp", "before swap - " + mNotesOrder.toString());
+            Log.i("temp", "before swap - " + mNotes.toString());
             if (fromPosition < toPosition) {
                 for (int i = fromPosition; i < toPosition; i++) {
                     Collections.swap(mNotes, i, i + 1);
@@ -165,6 +168,8 @@ public class NoteListFragment extends Fragment {
                 }
             }
             notifyItemMoved(fromPosition, toPosition);
+            Log.i("temp", "after swap - " + mNotesOrder.toString());
+            Log.i("temp", "after swap - " + mNotes.toString());
             return true;
         }
 
@@ -241,10 +246,15 @@ public class NoteListFragment extends Fragment {
 //            for (UUID id : mNotesOrder) {
 //                notes.add(noteDAO.getNote(id));
 //            }
-            UUID[] ids = new UUID[mNotesOrder.size()];
-            mNotesOrder.toArray(ids);
-            notes = noteDAO.getNotes(ids);
+//            UUID[] ids = new UUID[mNotesOrder.size()];
+//            mNotesOrder.toArray(ids);
+//            notes = noteDAO.getNotes(ids);
+            for (UUID id : mNotesOrder) {
+            notes.add(noteDAO.getNote(id));
+            }
         }
+
+        Log.i("temp", "save order - " + mNotesOrder.toString());
 
         if (mAdapter == null) {
             mAdapter = new NoteAdapter(notes);
@@ -293,6 +303,8 @@ public class NoteListFragment extends Fragment {
 
         editor.putString(NOTES_ORDER, json);
         editor.apply();
+
+        Log.i("temp", "save order - " + mNotesOrder.toString());
     }
 
     private void loadOrder() {
@@ -305,6 +317,7 @@ public class NoteListFragment extends Fragment {
             }.getType();
             mNotesOrder = gson.fromJson(json, listType);
         }
+        Log.i("temp", "load order - " + mNotesOrder.toString());
     }
 
     @Override
