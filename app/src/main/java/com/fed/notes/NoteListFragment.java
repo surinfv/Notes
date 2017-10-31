@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fed.notes.database.AppDatabase;
+import com.fed.notes.database.NoteDAO;
 import com.fed.notes.touchhelper.ItemTouchHelperAdapter;
 import com.fed.notes.touchhelper.SimpleItemTouchHelperCallback;
 import com.google.gson.Gson;
@@ -47,10 +49,15 @@ public class NoteListFragment extends Fragment {
     SharedPreferences mShPref;
     private List<UUID> mNotesOrder;
 
+    private AppDatabase db;
+    private NoteDAO noteDAO;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        db = AppDatabase.getAppDatabase(getContext());
+        noteDAO = db.getNoteDao();
     }
 
 
@@ -97,15 +104,15 @@ public class NoteListFragment extends Fragment {
         public void bindNote(Note note) {
             if (note == null) return;
             mNote = note;
-            mItemTitle.setText(mNote.getTitle());
-            mItemDescription.setText(mNote.getDescription());
+            mItemTitle.setText(mNote.title);
+            mItemDescription.setText(mNote.description);
             DateFormat dateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
-            mItemDate.setText(dateFormat.format(mNote.getDate()));
+            mItemDate.setText(dateFormat.format(mNote.date));
         }
 
         @Override
         public void onClick(View v) {
-            Intent intent = NoteActivity.newIntent(getActivity(), mNote.getId());
+            Intent intent = NoteActivity.newIntent(getActivity(), mNote.id);
             startActivity(intent);
         }
 
@@ -169,7 +176,7 @@ public class NoteListFragment extends Fragment {
             mNotesOrder.remove(position);
             notifyItemRemoved(position);
 
-            Snackbar mSnackBar = Snackbar.make(mNoteRecyclerView, mNoteTmp.getTitle() + getResources().getString(R.string.snackbar_delete), Snackbar.LENGTH_LONG);
+            Snackbar mSnackBar = Snackbar.make(mNoteRecyclerView, mNoteTmp.title + getResources().getString(R.string.snackbar_delete), Snackbar.LENGTH_LONG);
             View snackbarView = mSnackBar.getView();
             snackbarView.setBackgroundColor(getResources().getColor(R.color.snack_bar_background));
             mSnackBar.setAction(getResources().getString(R.string.snackbar_undo), snackbarOnClickListener);
@@ -179,7 +186,8 @@ public class NoteListFragment extends Fragment {
                 @Override
                 public void onDismissed(Snackbar snackbar, int event) {
                     if (event != Snackbar.Callback.DISMISS_EVENT_ACTION) {
-                        NoteBook.get(getActivity()).deleteNote(mNoteTmp);
+                        noteDAO.delete(mNoteTmp);
+//                        NoteBook.get(getActivity()).deleteNote(mNoteTmp);
                     }
                 }
 
@@ -194,9 +202,9 @@ public class NoteListFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 ///вернуть удаленную заметку на место
-                Toast.makeText(getActivity(), mNoteTmp.getTitle() + getResources().getString(R.string.snackbar_return), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), mNoteTmp.title + getResources().getString(R.string.snackbar_return), Toast.LENGTH_SHORT).show();
                 mNotes.add(mNoteTmpPos, mNoteTmp);
-                mNotesOrder.add(mNoteTmpPos, mNoteTmp.getId());
+                mNotesOrder.add(mNoteTmpPos, mNoteTmp.id);
                 notifyItemInserted(mNoteTmpPos);
             }
         };
@@ -204,10 +212,16 @@ public class NoteListFragment extends Fragment {
         private void cloneNote(Note note, int pos) {
             mNoteTmpPos = pos;
             mNoteTmp = new Note();
-            mNoteTmp.setTitle(note.getTitle());
-            mNoteTmp.setDescription(note.getDescription());
-            mNoteTmp.setId(note.getId());
-            mNoteTmp.setDate(note.getDate().getTime());
+//            mNoteTmp.setTitle(note.title);
+//            mNoteTmp.setDescription(note.description);
+//            mNoteTmp.setId(note.id);
+//            mNoteTmp.setDate(note.date.getTime());
+
+            mNoteTmp.title = note.title;
+            mNoteTmp.description = note.description;
+            mNoteTmp.id = note.id;
+            mNoteTmp.date = note.date;
+
         }
     }
 
@@ -220,13 +234,16 @@ public class NoteListFragment extends Fragment {
     private void updateUI() {
         loadOrder();
 
-        NoteBook notebook = NoteBook.get(getActivity());
+//        NoteBook notebook = NoteBook.get(getActivity());
 
         List<Note> notes = new ArrayList<>();
         if (mNotesOrder.size() > 0) {
-            for (UUID id : mNotesOrder) {
-                notes.add(notebook.getNote(id));
-            }
+//            for (UUID id : mNotesOrder) {
+//                notes.add(noteDAO.getNote(id));
+//            }
+            UUID[] ids = new UUID[mNotesOrder.size()];
+            mNotesOrder.toArray(ids);
+            notes = noteDAO.getNotes(ids);
         }
 
         if (mAdapter == null) {
@@ -250,10 +267,11 @@ public class NoteListFragment extends Fragment {
             case R.id.menu_item_new_note:
                 Note note = new Note();
 
-                mNotesOrder.add(0, note.getId());
+                mNotesOrder.add(0, note.id);
 
-                NoteBook.get(getActivity()).addNote(note);
-                Intent intent = NoteActivity.newIntent(getActivity(), note.getId());
+//                NoteBook.get(getActivity()).addNote(note);
+                noteDAO.insert(note);
+                Intent intent = NoteActivity.newIntent(getActivity(), note.id);
                 startActivity(intent);
                 return true;
             default:

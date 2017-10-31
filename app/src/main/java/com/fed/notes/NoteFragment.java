@@ -29,6 +29,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.fed.notes.database.AppDatabase;
+import com.fed.notes.database.NoteDAO;
 import com.fed.notes.utils.EditTextModif;
 import com.fed.notes.utils.ImageDialog;
 import com.fed.notes.utils.PictureUtils;
@@ -75,6 +77,9 @@ public class NoteFragment extends Fragment {
     public static final int REQUEST_PHOTO_CAM = 0;
     public static final int REQUEST_PHOTO_GAL = 1;
 
+    private AppDatabase db;
+    private NoteDAO noteDAO;
+
 
     public static NoteFragment newInstance(UUID id) {
         Bundle args = new Bundle();
@@ -88,10 +93,15 @@ public class NoteFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = AppDatabase.getAppDatabase(getContext());
+        noteDAO = db.getNoteDao();
+        
         UUID noteID = (UUID) getArguments().getSerializable(ARGS_NOTE_ID);
-        mNote = NoteBook.get(getActivity()).getNote(noteID);
-        mPhotoFile = NoteBook.get(getActivity()).getPhotoFile(mNote);
-
+//        mNote = NoteBook.get(getActivity()).getNote(noteID);
+        mNote = noteDAO.getNote(noteID);
+//        mPhotoFile = NoteBook.get(getActivity()).getPhotoFile(mNote);
+        mPhotoFile = db.getPhotoFile(mNote);
+        
         //check 4 photo:
         PackageManager packageManager = getActivity().getPackageManager();
         mCapturePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -110,8 +120,8 @@ public class NoteFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mPhotoFile = NoteBook.get(getActivity()).getPhotoFile(mNote);
-        NoteBook.get(getActivity()).updateNote(mNote);
+        mPhotoFile = db.getPhotoFile(mNote);
+        noteDAO.insert(mNote);
     }
 
     @Nullable
@@ -120,7 +130,7 @@ public class NoteFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_note, container, false);
 
         mNoteTitleField = v.findViewById(R.id.note_title);
-        mNoteTitleField.setText(mNote.getTitle());
+        mNoteTitleField.setText(mNote.title);
         mNoteTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -129,7 +139,7 @@ public class NoteFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mNote.setTitle(s.toString());
+                mNote.title = s.toString();
             }
 
             @Override
@@ -139,7 +149,7 @@ public class NoteFragment extends Fragment {
         });
 
         mNoteDescriptionField = v.findViewById(R.id.note_description);
-        mNoteDescriptionField.setText(mNote.getDescription());
+        mNoteDescriptionField.setText(mNote.description);
         mNoteDescriptionField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -148,7 +158,7 @@ public class NoteFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mNote.setDescription(s.toString());
+                mNote.description = s.toString();
             }
 
             @Override
@@ -159,7 +169,7 @@ public class NoteFragment extends Fragment {
 
         mDate = v.findViewById(R.id.create_date);
         mDateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
-        mDate.setText(mDateFormat.format(mNote.getDate()));
+        mDate.setText(mDateFormat.format(mNote.date));
 
         mPhotoView = v.findViewById(R.id.note_photo);
         updatePhotoView();
@@ -246,15 +256,15 @@ public class NoteFragment extends Fragment {
                     intent = ShareCompat.IntentBuilder.from(getActivity())
                             .setType("plain/text")
 //                            .setType("image/*")
-                            .setSubject(getResources().getString(R.string.email_text) + mNote.getTitle())
-                            .setText(mNote.getDescription())
+                            .setSubject(getResources().getString(R.string.email_text) + mNote.title)
+                            .setText(mNote.description)
                             .setStream(mUriPhotoFile)
                             .getIntent();
                 } else {
                     intent = ShareCompat.IntentBuilder.from(getActivity())
                             .setType("plain/text")
-                            .setSubject(getResources().getString(R.string.email_text) + mNote.getTitle())
-                            .setText(mNote.getDescription())
+                            .setSubject(getResources().getString(R.string.email_text) + mNote.title)
+                            .setText(mNote.description)
                             .getIntent();
                 }
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
@@ -280,8 +290,9 @@ public class NoteFragment extends Fragment {
                 deleteAlertDialog.setPositiveButton(R.string.alert_on_del_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        NoteBook.get(getActivity()).deleteNote(mNote);
-                        delFromOrderList(mNote.getId());
+//                        NoteBook.get(getActivity()).deleteNote(mNote);
+                        noteDAO.delete(mNote);
+                        delFromOrderList(mNote.id);
                         getActivity().finish();
                     }
                 });
