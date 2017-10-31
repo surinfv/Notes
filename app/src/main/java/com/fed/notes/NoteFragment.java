@@ -75,6 +75,7 @@ public class NoteFragment extends Fragment {
     private boolean canTakePhoto;
     private Intent capturePhotoIntent;
     private Uri uriPhotoFile;
+
     private AppDatabase db;
     private NoteDAO noteDAO;
 

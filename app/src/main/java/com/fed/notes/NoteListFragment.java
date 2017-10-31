@@ -42,14 +42,14 @@ import java.util.UUID;
 
 public class NoteListFragment extends Fragment {
 
-    public static final String NOTES_ORDER = "notesoreder";
+    public static final String NOTES_ORDER = "notesorder";
+
     private RecyclerView noteRecyclerView;
+
     private NoteAdapter adapter;
-
     private ItemTouchHelper itemTouchHelper;
-    SharedPreferences shPref;
+    private SharedPreferences shPref;
     private List<UUID> notesOrder;
-
     private AppDatabase db;
     private NoteDAO noteDAO;
 
@@ -82,6 +82,93 @@ public class NoteListFragment extends Fragment {
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
         itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(noteRecyclerView);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    private void updateUI() {
+        loadOrder();
+
+        List<Note> notes = new ArrayList<>();
+        if (notesOrder.size() > 0) {
+            //TODO: get notes list in one query in order from orderlist
+//            UUID[] ids = new UUID[notesOrder.size()];
+//            notesOrder.toArray(ids);
+//            notes = noteDAO.getNotes(ids);
+            for (UUID id : notesOrder) {
+                notes.add(noteDAO.getNote(id));
+            }
+        }
+        if (adapter == null) {
+            adapter = new NoteAdapter(notes);
+            noteRecyclerView.setAdapter(adapter);
+        } else {
+            adapter.setNotes(notes);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    private void saveOrder() {
+        shPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = shPref.edit();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(notesOrder);
+
+        editor.putString(NOTES_ORDER, json);
+        editor.apply();
+
+        Log.i("temp", "save order - " + notesOrder.toString());
+    }
+
+    private void loadOrder() {
+        notesOrder = new ArrayList<>();
+        shPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String json = shPref.getString(NOTES_ORDER, "");
+        if (!json.equals("")) {
+            Gson gson = new Gson();
+            Type listType = new TypeToken<ArrayList<UUID>>() {
+            }.getType();
+            notesOrder = gson.fromJson(json, listType);
+        }
+        Log.i("temp", "load order - " + notesOrder.toString());
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.list_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_new_note:
+                Note note = new Note();
+
+                notesOrder.add(0, note.id);
+                noteDAO.insert(note);
+                Intent intent = NoteActivity.newIntent(getActivity(), note.id);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        saveOrder();
     }
 
     private class NoteHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -119,9 +206,8 @@ public class NoteListFragment extends Fragment {
 
     private class NoteAdapter extends RecyclerView.Adapter<NoteHolder> implements ItemTouchHelperAdapter {
 
-        private Note noteTmp;
         private int noteTmpPos;
-
+        private Note noteTmp;
         private List<Note> notes;
 
         public NoteAdapter(List<Note> notes) {
@@ -216,95 +302,5 @@ public class NoteListFragment extends Fragment {
             noteTmp.date = note.date;
 
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        updateUI();
-    }
-
-    private void updateUI() {
-        loadOrder();
-
-        List<Note> notes = new ArrayList<>();
-        if (notesOrder.size() > 0) {
-            //TODO: get notes list in one query in order from orderlist
-//            UUID[] ids = new UUID[notesOrder.size()];
-//            notesOrder.toArray(ids);
-//            notes = noteDAO.getNotes(ids);
-            for (UUID id : notesOrder) {
-                notes.add(noteDAO.getNote(id));
-            }
-        }
-
-        Log.i("temp", "save order - " + notesOrder.toString());
-
-        if (adapter == null) {
-            adapter = new NoteAdapter(notes);
-            noteRecyclerView.setAdapter(adapter);
-        } else {
-            adapter.setNotes(notes);
-            adapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.list_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_item_new_note:
-                Note note = new Note();
-
-                notesOrder.add(0, note.id);
-                noteDAO.insert(note);
-                Intent intent = NoteActivity.newIntent(getActivity(), note.id);
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    private void saveOrder() {
-        shPref = PreferenceManager.getDefaultSharedPreferences(getContext());
-        SharedPreferences.Editor editor = shPref.edit();
-
-        Gson gson = new Gson();
-        String json = gson.toJson(notesOrder);
-
-        editor.putString(NOTES_ORDER, json);
-        editor.apply();
-
-        Log.i("temp", "save order - " + notesOrder.toString());
-    }
-
-    private void loadOrder() {
-        notesOrder = new ArrayList<>();
-        shPref = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String json = shPref.getString(NOTES_ORDER, "");
-        if (!json.equals("")) {
-            Gson gson = new Gson();
-            Type listType = new TypeToken<ArrayList<UUID>>() {
-            }.getType();
-            notesOrder = gson.fromJson(json, listType);
-        }
-        Log.i("temp", "load order - " + notesOrder.toString());
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        saveOrder();
     }
 }
