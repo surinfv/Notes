@@ -99,9 +99,7 @@ public class NoteFragment extends Fragment {
         noteDAO = db.getNoteDao();
         
         UUID noteID = (UUID) getArguments().getSerializable(ARGS_NOTE_ID);
-//        note = NoteBook.get(getActivity()).getNote(noteID);
         note = noteDAO.getNote(noteID);
-//        photoFile = NoteBook.get(getActivity()).getPhotoFile(note);
         photoFile = db.getPhotoFile(note);
         
         //check 4 photo:

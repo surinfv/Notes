@@ -72,24 +72,19 @@ public class NoteListFragment extends Fragment {
         noteRecyclerView = view.findViewById(R.id.note_recycler_view);
         noteRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-
-        updateUI();
         return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
-        itemTouchHelper = new ItemTouchHelper(callback);
-        itemTouchHelper.attachToRecyclerView(noteRecyclerView);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         updateUI();
+
+        if (itemTouchHelper == null) {
+            ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
+            itemTouchHelper = new ItemTouchHelper(callback);
+            itemTouchHelper.attachToRecyclerView(noteRecyclerView);
+        }
     }
 
     private void updateUI() {
@@ -123,8 +118,6 @@ public class NoteListFragment extends Fragment {
 
         editor.putString(NOTES_ORDER, json);
         editor.apply();
-
-        Log.i("temp", "save order - " + notesOrder.toString());
     }
 
     private void loadOrder() {
@@ -137,7 +130,6 @@ public class NoteListFragment extends Fragment {
             }.getType();
             notesOrder = gson.fromJson(json, listType);
         }
-        Log.i("temp", "load order - " + notesOrder.toString());
     }
 
     @Override
