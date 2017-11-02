@@ -14,15 +14,13 @@ import java.util.UUID;
 public class Converter {
 
     @TypeConverter
-    public static Date dbToDate(String json) {
-        Gson gson = new Gson();
-        return gson.fromJson(json, Date.class);
-
+    public static Date timestampToDate(Long timestamp) {
+        return timestamp == null ? null : new Date(timestamp);
     }
+
     @TypeConverter
-    public static String dateToDb(Date date) {
-        Gson gson = new Gson();
-        return gson.toJson(date);
+    public static Long dbToTimestamp(Date date) {
+        return date == null ? null : date.getTime();
     }
 
     @TypeConverter
