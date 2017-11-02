@@ -109,17 +109,6 @@ public class NoteListFragment extends Fragment {
         }
     }
 
-    private void saveOrder() {
-        shPref = PreferenceManager.getDefaultSharedPreferences(getContext());
-        SharedPreferences.Editor editor = shPref.edit();
-
-        Gson gson = new Gson();
-        String json = gson.toJson(notesOrder);
-
-        editor.putString(NOTES_ORDER, json);
-        editor.apply();
-    }
-
     private void loadOrder() {
         notesOrder = new ArrayList<>();
         shPref = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -163,6 +152,17 @@ public class NoteListFragment extends Fragment {
     public void onPause() {
         super.onPause();
         saveOrder();
+    }
+
+    private void saveOrder() {
+        shPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = shPref.edit();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(notesOrder);
+
+        editor.putString(NOTES_ORDER, json);
+        editor.apply();
     }
 
     private class NoteHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
