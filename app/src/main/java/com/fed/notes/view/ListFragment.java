@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fed.notes.App;
 import com.fed.notes.R;
 import com.fed.notes.database.AppDatabase;
 import com.fed.notes.database.Note;
@@ -36,6 +37,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 /**
  * Created by f on 10.05.2017.
  */
@@ -50,14 +53,15 @@ public class ListFragment extends Fragment {
     private ItemTouchHelper itemTouchHelper;
     private SharedPreferences shPref;
     private List<UUID> notesOrder;
-    private AppDatabase db;
+    @Inject
+    AppDatabase db;
     private NoteDAO noteDAO;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        db = AppDatabase.getAppDatabase(getContext());
+        App.getComponent().inject(this);
         noteDAO = db.getNoteDao();
     }
 
@@ -131,16 +135,15 @@ public class ListFragment extends Fragment {
 
                 notesOrder.add(0, note.id);
                 noteDAO.insert(note);
-                ((MainActivity) getActivity()).oneNoteFragment(note);
+                showNoteFragment(note);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    private void showNoteFragment(Note note) {
+        ((MainActivity) getActivity()).oneNoteFragment(note);
     }
 
     @Override
@@ -187,11 +190,8 @@ public class ListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-//            Intent intent = NoteActivity.newIntent(getActivity(), note.id);
-//            startActivity(intent);
-            ((MainActivity) getActivity()).oneNoteFragment(note);
+            showNoteFragment(note);
         }
-
     }
 
     private class NoteAdapter extends RecyclerView.Adapter<NoteHolder> implements ItemTouchHelperAdapter {

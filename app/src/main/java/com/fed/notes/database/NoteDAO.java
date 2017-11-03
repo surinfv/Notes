@@ -6,8 +6,6 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
-
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -23,12 +21,16 @@ public interface NoteDAO {
     @Delete
     void delete(Note note);
 
-    @Query("SELECT * FROM notes")
-    List<Note> getAllNotes();
+// --Commented out by Inspection START (03.11.2017 12:11):
+//    @Query("SELECT * FROM notes")
+//    List<Note> getAllNotes();
+// --Commented out by Inspection STOP (03.11.2017 12:11)
 
     @Query("SELECT * FROM notes WHERE id = :id")
     Note getNote(UUID id);
 
-    @Query("SELECT * FROM notes WHERE id IN(:ids)")
-    List<Note> getNotes(UUID[] ids);
+// --Commented out by Inspection START (03.11.2017 12:11):
+//    @Query("SELECT * FROM notes WHERE id IN(:ids)")
+//    List<Note> getNotes(UUID[] ids);
+// --Commented out by Inspection STOP (03.11.2017 12:11)
 }

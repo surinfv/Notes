@@ -11,13 +11,13 @@ import android.graphics.Point;
 
 public class PictureUtils {
 
-    public static Bitmap getScaledBitmap(String path, Activity activity){
+    public static Bitmap getScaledBitmap(String path, Activity activity) {
         Point size = new Point();
         activity.getWindowManager().getDefaultDisplay().getSize(size);
         return getScaledBitmap(path, size.x, size.y);
     }
 
-    public static Bitmap getScaledBitmap(String path, int destWidth, int destHeight){
+    private static Bitmap getScaledBitmap(String path, int destWidth, int destHeight) {
         //чтение размеров картинки на диске
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -33,14 +33,14 @@ public class PictureUtils {
 
         //вычисление степени масштабирования
         int inSampleSize = 1;
-        if (scrHeigth > destHeight || scrWidth > destWidth){
-            if (scrWidth > scrHeigth){
+        if (scrHeigth > destHeight || scrWidth > destWidth) {
+            if (scrWidth > scrHeigth) {
                 inSampleSize = Math.round(scrHeigth / destHeight);
             } else {
                 inSampleSize = Math.round(scrWidth / destWidth);
             }
         }
-        inSampleSize*=2;
+        inSampleSize *= 2;
 
 //        Log.e("LOOKSampleSize", "" + inSampleSize);
 

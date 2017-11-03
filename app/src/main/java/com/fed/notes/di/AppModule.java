@@ -1,0 +1,40 @@
+package com.fed.notes.di;
+
+import android.arch.persistence.room.Room;
+import android.content.Context;
+
+import com.fed.notes.App;
+import com.fed.notes.database.AppDatabase;
+
+import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
+
+/**
+ * Created by Fedor SURIN on 03.11.2017.
+ */
+
+@Module
+public class AppModule {
+    private Context context;
+
+    public AppModule(App app) {
+        context = app;
+    }
+
+    @Singleton
+    @Provides
+    AppDatabase provideDB(Context context) {
+        return Room
+                .databaseBuilder(context, AppDatabase.class, "notes-db")
+                .allowMainThreadQueries()   //TODO: remove this - synk db queries
+                .build();
+    }
+
+    @Singleton
+    @Provides
+    Context getContext() {
+        return context;
+    }
+}

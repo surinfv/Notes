@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.fed.notes.App;
 import com.fed.notes.BuildConfig;
 import com.fed.notes.R;
 import com.fed.notes.database.AppDatabase;
@@ -54,6 +55,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import static java.lang.System.in;
 import static java.lang.System.out;
 
@@ -62,9 +65,9 @@ import static java.lang.System.out;
  */
 
 public class NoteFragment extends Fragment {
-    public static final String ARGS_NOTE_ID = "argsnoteid";
-    public static final int REQUEST_PHOTO_CAM = 0;
-    public static final int REQUEST_PHOTO_GAL = 1;
+    private static final String ARGS_NOTE_ID = "argsnoteid";
+    private static final int REQUEST_PHOTO_CAM = 0;
+    private static final int REQUEST_PHOTO_GAL = 1;
 
     private Note note;
 
@@ -79,7 +82,8 @@ public class NoteFragment extends Fragment {
     private Intent capturePhotoIntent;
     private Uri uriPhotoFile;
 
-    private AppDatabase db;
+    @Inject
+    AppDatabase db;
     private NoteDAO noteDAO;
 
 
@@ -95,7 +99,8 @@ public class NoteFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = AppDatabase.getAppDatabase(getContext());
+        App.getComponent().inject(this);
+
         noteDAO = db.getNoteDao();
 
         UUID noteID = (UUID) getArguments().getSerializable(ARGS_NOTE_ID);

@@ -34,6 +34,7 @@ android {
 ext {
     androidSupport = '26.1.0'
     roomPersistence = '1.0.0-rc1'
+    dagger2 = '2.12'
 }
 
 dependencies {
@@ -49,4 +50,10 @@ dependencies {
     compile "android.arch.persistence.room:runtime:$roomPersistence"
     annotationProcessor "android.arch.persistence.room:compiler:$roomPersistence"
     compile 'com.google.code.gson:gson:2.8.2'
+
+    compile "com.google.dagger:dagger:$dagger2"
+    compile "com.google.dagger:dagger-android-support:$dagger2"
+    annotationProcessor "com.google.dagger:dagger-android-processor:$dagger2"
+    annotationProcessor "com.google.dagger:dagger-compiler:$dagger2"
+
 }
