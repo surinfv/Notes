@@ -1,6 +1,5 @@
 package com.fed.notes.view;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -10,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,7 +40,7 @@ import java.util.UUID;
  * Created by f on 10.05.2017.
  */
 
-public class NoteListFragment extends Fragment {
+public class ListFragment extends Fragment {
 
     public static final String NOTES_ORDER = "notesorder";
 
@@ -80,11 +78,9 @@ public class NoteListFragment extends Fragment {
         super.onResume();
         updateUI();
 
-        if (itemTouchHelper == null) {
-            ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
-            itemTouchHelper = new ItemTouchHelper(callback);
-            itemTouchHelper.attachToRecyclerView(noteRecyclerView);
-        }
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
+        itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(noteRecyclerView);
     }
 
     private void updateUI() {
@@ -100,13 +96,13 @@ public class NoteListFragment extends Fragment {
                 notes.add(noteDAO.getNote(id));
             }
         }
-        if (adapter == null) {
-            adapter = new NoteAdapter(notes);
-            noteRecyclerView.setAdapter(adapter);
-        } else {
-            adapter.setNotes(notes);
-            adapter.notifyDataSetChanged();
-        }
+//        if (adapter == null) {
+        adapter = new NoteAdapter(notes);
+        noteRecyclerView.setAdapter(adapter);
+//        } else {
+        adapter.setNotes(notes);
+        adapter.notifyDataSetChanged();
+//        }
     }
 
     private void loadOrder() {
@@ -135,8 +131,7 @@ public class NoteListFragment extends Fragment {
 
                 notesOrder.add(0, note.id);
                 noteDAO.insert(note);
-                Intent intent = NoteActivity.newIntent(getActivity(), note.id);
-                startActivity(intent);
+                ((MainActivity) getActivity()).oneNoteFragment(note);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -192,8 +187,9 @@ public class NoteListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Intent intent = NoteActivity.newIntent(getActivity(), note.id);
-            startActivity(intent);
+//            Intent intent = NoteActivity.newIntent(getActivity(), note.id);
+//            startActivity(intent);
+            ((MainActivity) getActivity()).oneNoteFragment(note);
         }
 
     }
@@ -203,6 +199,16 @@ public class NoteListFragment extends Fragment {
         private int noteTmpPos;
         private Note noteTmp;
         private List<Note> notes;
+        View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ///return just deleted note
+                Toast.makeText(getActivity(), noteTmp.title + getResources().getString(R.string.snackbar_return), Toast.LENGTH_SHORT).show();
+                notes.add(noteTmpPos, noteTmp);
+                notesOrder.add(noteTmpPos, noteTmp.id);
+                notifyItemInserted(noteTmpPos);
+            }
+        };
 
         public NoteAdapter(List<Note> notes) {
             this.notes = notes;
@@ -275,17 +281,6 @@ public class NoteListFragment extends Fragment {
 //                        }
             });
         }
-
-        View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ///return just deleted note
-                Toast.makeText(getActivity(), noteTmp.title + getResources().getString(R.string.snackbar_return), Toast.LENGTH_SHORT).show();
-                notes.add(noteTmpPos, noteTmp);
-                notesOrder.add(noteTmpPos, noteTmp.id);
-                notifyItemInserted(noteTmpPos);
-            }
-        };
 
         private void cloneNote(Note note, int pos) {
             noteTmpPos = pos;

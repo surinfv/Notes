@@ -97,11 +97,11 @@ public class NoteFragment extends Fragment {
         super.onCreate(savedInstanceState);
         db = AppDatabase.getAppDatabase(getContext());
         noteDAO = db.getNoteDao();
-        
+
         UUID noteID = (UUID) getArguments().getSerializable(ARGS_NOTE_ID);
         note = noteDAO.getNote(noteID);
         photoFile = db.getPhotoFile(note);
-        
+
         //check 4 photo:
         PackageManager packageManager = getActivity().getPackageManager();
         capturePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -310,15 +310,16 @@ public class NoteFragment extends Fragment {
 
     private void delFromOrderList(UUID uuid) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String json = prefs.getString(NoteListFragment.NOTES_ORDER, "");
+        String json = prefs.getString(ListFragment.NOTES_ORDER, "");
         Gson gson = new Gson();
-        Type listType = new TypeToken<ArrayList<UUID>>(){}.getType();
+        Type listType = new TypeToken<ArrayList<UUID>>() {
+        }.getType();
         List<UUID> IDs = gson.fromJson(json, listType);
         IDs.remove(uuid);
 
         SharedPreferences.Editor editor = prefs.edit();
         json = gson.toJson(IDs);
-        editor.putString(NoteListFragment.NOTES_ORDER, json);
+        editor.putString(ListFragment.NOTES_ORDER, json);
         editor.apply();
     }
 
@@ -328,7 +329,7 @@ public class NoteFragment extends Fragment {
         if (requestCode == REQUEST_PHOTO_CAM) {
             updatePhotoView();
         }
-        if (requestCode == REQUEST_PHOTO_GAL){
+        if (requestCode == REQUEST_PHOTO_GAL) {
             //по полученному УРИ пишем в файл картику
             Uri imgUri = data.getData();
 
