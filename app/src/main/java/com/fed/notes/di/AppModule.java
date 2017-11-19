@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.fed.notes.App;
 import com.fed.notes.database.AppDatabase;
+import com.fed.notes.database.DbHelper;
 
 import javax.inject.Singleton;
 
@@ -25,6 +26,12 @@ public class AppModule {
 
     @Singleton
     @Provides
+    Context provideContext() {
+        return context;
+    }
+
+    @Singleton
+    @Provides
     AppDatabase provideDB(Context context) {
         return Room
                 .databaseBuilder(context, AppDatabase.class, "notes-db")
@@ -34,7 +41,7 @@ public class AppModule {
 
     @Singleton
     @Provides
-    Context getContext() {
-        return context;
+    DbHelper provideDbHelper(AppDatabase appDatabase) {
+        return new DbHelper(appDatabase);
     }
 }

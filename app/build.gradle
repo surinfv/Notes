@@ -16,7 +16,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
-        versionName "1.0"
+        versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -29,11 +29,15 @@ android {
             signingConfig signingConfigs.config
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 ext {
     androidSupport = '26.1.0'
-    roomPersistence = '1.0.0-rc1'
+    roomPersistence = '1.0.0'
     dagger2 = '2.12'
 }
 
@@ -50,10 +54,10 @@ dependencies {
     compile "android.arch.persistence.room:runtime:$roomPersistence"
     annotationProcessor "android.arch.persistence.room:compiler:$roomPersistence"
     compile 'com.google.code.gson:gson:2.8.2'
-
     compile "com.google.dagger:dagger:$dagger2"
     compile "com.google.dagger:dagger-android-support:$dagger2"
     annotationProcessor "com.google.dagger:dagger-android-processor:$dagger2"
     annotationProcessor "com.google.dagger:dagger-compiler:$dagger2"
-
+    compile 'io.reactivex.rxjava2:rxjava:2.1.6'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 }

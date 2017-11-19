@@ -18,17 +18,4 @@ import java.io.File;
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract NoteDAO getNoteDao();
-
-    public File getPhotoFile(Note note) {
-        File externalFileDir;
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            externalFileDir = App.getInstance().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        } else {
-            externalFileDir = App.getInstance().getFilesDir();
-        }
-
-        if (externalFileDir == null) return null;
-
-        return new File(externalFileDir, note.getPhotoFilename());
-    }
 }

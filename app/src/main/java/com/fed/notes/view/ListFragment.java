@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.fed.notes.App;
 import com.fed.notes.R;
 import com.fed.notes.database.AppDatabase;
+import com.fed.notes.database.DbHelper;
 import com.fed.notes.database.Note;
 import com.fed.notes.database.NoteDAO;
 import com.fed.notes.touchhelper.ItemTouchHelperAdapter;
@@ -57,6 +58,9 @@ public class ListFragment extends Fragment {
     AppDatabase db;
     private NoteDAO noteDAO;
 
+    @Inject
+    DbHelper dbHelper;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +94,7 @@ public class ListFragment extends Fragment {
     private void updateUI() {
         loadOrder();
 
+        //fixme add reactive getNotes
         List<Note> notes = new ArrayList<>();
         if (notesOrder.size() > 0) {
             //TODO: get notes list in one query in order from orderlist
