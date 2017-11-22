@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="fab_bottom_padding">60dp</dimen>
+    <dimen name="fab_right_padding">16dp</dimen>
+    <dimen name="fab_cardElevation">8dp</dimen>
+    <dimen name="fab_cardCornerRadius">2dp</dimen>
+    <dimen name="fab_cardview_vertical_padding">2dp</dimen>
+    <dimen name="fab_cardview_horizontal_padding">2dp</dimen>
+</resources>

@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -49,6 +50,7 @@ public class ListFragment extends Fragment {
     public static final String NOTES_ORDER = "notesorder";
 
     private RecyclerView noteRecyclerView;
+    private FloatingActionButton fab;
 
     private NoteAdapter adapter;
     private ItemTouchHelper itemTouchHelper;
@@ -77,7 +79,8 @@ public class ListFragment extends Fragment {
 
         noteRecyclerView = view.findViewById(R.id.note_recycler_view);
         noteRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
+        fab = view.findViewById(R.id.fab_add_note);
+        fab.setOnClickListener((view1 -> createNewNote()));
         return view;
     }
 
@@ -136,16 +139,20 @@ public class ListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_new_note:
-                Note note = new Note();
-
-                notesOrder.add(0, note.id);
-                noteDAO.insert(note);
-
-                ((MainActivity) getActivity()).oneNoteFragmentEditor(note);
+                createNewNote();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void createNewNote() {
+        Note note = new Note();
+
+        notesOrder.add(0, note.id);
+        noteDAO.insert(note);
+
+        ((MainActivity) getActivity()).oneNoteFragmentEditor(note);
     }
 
     @Override

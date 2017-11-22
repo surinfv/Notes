@@ -13,6 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppMainTheme"
         android:name=".App"
+        android:screenOrientation="portrait"
         >
 
 

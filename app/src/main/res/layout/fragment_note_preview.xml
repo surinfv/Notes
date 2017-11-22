@@ -60,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/note_title_hint"
-                android:textSize="24sp"
+                android:textSize="22sp"
                 android:inputType="text"
                 android:textStyle="bold"
                 android:gravity="center"/>
@@ -84,4 +84,5 @@
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
+
 </android.support.design.widget.CoordinatorLayout>

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
@@ -74,6 +75,7 @@ public class NoteEditorFragment extends Fragment {
     private EditTextModif noteDescriptionField;
     private TextView date;
     private ImageView photoView;
+    private FloatingActionButton fab;
 
     private DateFormat dateFormat;
     private File photoFile;
@@ -190,7 +192,8 @@ public class NoteEditorFragment extends Fragment {
             dialog.show(manager, "IMAGE_FULL");
         });
 
-
+        fab = v.findViewById(R.id.fab_photo);
+        fab.setOnClickListener((view1 -> takePhotoDialog()));
         return v;
     }
 
@@ -221,10 +224,6 @@ public class NoteEditorFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_item_take_photo:
                 takePhotoDialog();
-                return true;
-
-            case R.id.menu_item_delete_note:
-                deleteNoteDialog();
                 return true;
 
             default:
@@ -265,40 +264,6 @@ public class NoteEditorFragment extends Fragment {
         photoAlertDialog.show();
     }
 
-    private void deleteNoteDialog() {
-        AlertDialog.Builder deleteAlertDialog = new AlertDialog.Builder(getActivity());
-        deleteAlertDialog.setTitle(R.string.alert_on_del_title);
-        deleteAlertDialog.setMessage(R.string.alert_on_del_text);
-        deleteAlertDialog.setPositiveButton(R.string.alert_on_del_yes, (dialog, which) -> {
-            NoteEditorFragment.this.delFromOrderList(note.id);
-//                        dbHelper.delete(note);
-            dbHelper.deleteRx(note)
-                    .observeOn(Schedulers.io())
-                    .subscribe(() -> {
-                            },
-                            Throwable::printStackTrace);
-            NoteEditorFragment.this.getActivity().onBackPressed();
-        });
-        deleteAlertDialog.setNeutralButton(R.string.alert_on_del_cancel, (dialog, which) -> {
-        });
-        deleteAlertDialog.show();
-    }
-
-    private void delFromOrderList(UUID uuid) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String json = prefs.getString(ListFragment.NOTES_ORDER, "");
-        Gson gson = new Gson();
-        Type listType = new TypeToken<ArrayList<UUID>>() {
-        }.getType();
-        List<UUID> IDs = gson.fromJson(json, listType);
-        IDs.remove(uuid);
-
-        SharedPreferences.Editor editor = prefs.edit();
-        json = gson.toJson(IDs);
-        editor.putString(ListFragment.NOTES_ORDER, json);
-        editor.apply();
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) return;
@@ -334,7 +299,6 @@ public class NoteEditorFragment extends Fragment {
             updatePhotoView();
         }
     }
-
 
     private void updatePhotoView() {
         if (photoFile.exists()) {
