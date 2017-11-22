@@ -16,6 +16,7 @@
     <string name="alert_on_photo_text_second_photo">добавить новое или удалить?</string>
     <string name="alert_on_photo_title">фото</string>
     <string name="menu_delete_note">удалить заметку</string>
+    <string name="menu_edit_note">редактировать заметку</string>
     <string name="menu_new_note">новая</string>
     <string name="menu_send_via_email">отправить</string>
     <string name="menu_take_photo">изображение</string>

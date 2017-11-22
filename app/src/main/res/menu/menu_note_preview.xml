@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/menu_item_take_photo"
-        android:icon="@drawable/ic_take_photo"
-        android:title="@string/menu_take_photo"
-        app:showAsAction="ifRoom|withText"/>
+    <!--<item-->
+        <!--android:id="@+id/menu_item_take_photo"-->
+        <!--android:icon="@drawable/ic_take_photo"-->
+        <!--android:title="@string/menu_take_photo"-->
+        <!--app:showAsAction="ifRoom|withText"/>-->
     <item
         android:id="@+id/menu_item_send_via_email"
         android:icon="@drawable/ic_send_email"
         android:title="@string/menu_send_via_email"
+        app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/menu_item_edit_note"
+        android:icon="@drawable/ic_edit_mode"
+        android:title="@string/menu_edit_note"
         app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/menu_item_delete_note"

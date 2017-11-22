@@ -13,7 +13,6 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.ShareCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -64,7 +63,7 @@ import static java.lang.System.out;
  * Created by f on 05.05.2017.
  */
 
-public class NoteFragment extends Fragment {
+public class NoteEditorFragment extends Fragment {
     private static final String ARGS_NOTE_ID = "argsnoteid";
     private static final int REQUEST_PHOTO_CAM = 0;
     private static final int REQUEST_PHOTO_GAL = 1;
@@ -85,11 +84,11 @@ public class NoteFragment extends Fragment {
     @Inject
     DbHelper dbHelper;
 
-    public static NoteFragment newInstance(UUID id) {
+    public static NoteEditorFragment newInstance(UUID id) {
         Bundle args = new Bundle();
         args.putSerializable(ARGS_NOTE_ID, id);
 
-        NoteFragment noteFragment = new NoteFragment();
+        NoteEditorFragment noteFragment = new NoteEditorFragment();
         noteFragment.setArguments(args);
         return noteFragment;
     }
@@ -138,7 +137,7 @@ public class NoteFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_note, container, false);
+        View v = inflater.inflate(R.layout.fragment_note_editor, container, false);
 
         noteTitleField = v.findViewById(R.id.note_title);
         noteTitleField.setText(note.title);
@@ -185,12 +184,12 @@ public class NoteFragment extends Fragment {
         photoView = v.findViewById(R.id.note_photo);
         updatePhotoView();
 
-
         photoView.setOnClickListener(v1 -> {
             FragmentManager manager = getFragmentManager();
             ImageDialog dialog = ImageDialog.newInstance(photoFile.getPath());
             dialog.show(manager, "IMAGE_FULL");
         });
+
 
         return v;
     }
@@ -210,7 +209,7 @@ public class NoteFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.item_menu, menu);
+        inflater.inflate(R.menu.menu_note_editor, menu);
 
         MenuItem photoButton = menu.findItem(R.id.menu_item_take_photo);
         photoButton.setVisible(canTakePhoto);
@@ -220,93 +219,69 @@ public class NoteFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-
             case R.id.menu_item_take_photo:
-
-                final AlertDialog.Builder photoAlertDialog = new AlertDialog.Builder(getActivity());
-                photoAlertDialog.setTitle(R.string.alert_on_photo_title);
-                photoAlertDialog.setPositiveButton(R.string.alert_on_photo_cam, (dialog, which) -> {
-                    capturePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriPhotoFile);
-                    startActivityForResult(capturePhotoIntent, REQUEST_PHOTO_CAM);
-                });
-                photoAlertDialog.setNegativeButton(R.string.alert_on_photo_gallery, (dialog, which) -> {
-                    Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                    photoPickerIntent.setType("image/*");
-                    startActivityForResult(photoPickerIntent, REQUEST_PHOTO_GAL);
-                });
-
-                if (!photoFile.exists()) {
-                    photoAlertDialog.setMessage(R.string.alert_on_photo_text_first_photo);
-                } else {
-                    photoAlertDialog.setMessage(R.string.alert_on_photo_text_second_photo);
-                    photoAlertDialog.setNeutralButton(R.string.alert_on_photo_remove, (dialog, which) -> {
-                        AlertDialog.Builder photoDelDialog = new AlertDialog.Builder(getActivity());
-                        photoDelDialog.setTitle(R.string.alert_del_photo_title);
-                        photoDelDialog.setMessage(R.string.alert_del_photo_text);
-                        photoDelDialog.setPositiveButton(R.string.alert_del_photo_yes, (dialog12, which12) -> {
-                            photoFile.delete();
-                            updatePhotoView();
-                        });
-                        photoDelDialog.setNegativeButton(R.string.alert_del_photo_no, (dialog1, which1) -> {
-                        });
-                        photoDelDialog.show();
-                    });
-                }
-                photoAlertDialog.show();
-                return true;
-
-            case R.id.menu_item_send_via_email:
-                Intent intent;
-                if (photoFile.exists()) {
-                    intent = ShareCompat.IntentBuilder.from(getActivity())
-                            .setType("plain/text")
-//                            .setType("image/*")
-                            .setSubject(getResources().getString(R.string.email_text) + note.title)
-                            .setText(note.description)
-                            .setStream(uriPhotoFile)
-                            .getIntent();
-                } else {
-                    intent = ShareCompat.IntentBuilder.from(getActivity())
-                            .setType("plain/text")
-                            .setSubject(getResources().getString(R.string.email_text) + note.title)
-                            .setText(note.description)
-                            .getIntent();
-                }
-                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivity(intent);
-//                    startActivity(Intent.createChooser(intent, "send via..."));
-                } else {
-                    AlertDialog.Builder eMailIntentAlertDialog = new AlertDialog.Builder(getActivity());
-                    eMailIntentAlertDialog.setTitle(R.string.email_intent_title);
-                    eMailIntentAlertDialog.setMessage(R.string.email_intent_text);
-                    eMailIntentAlertDialog.setNeutralButton(R.string.ok_button, (dialog, which) -> {
-                    });
-                    eMailIntentAlertDialog.show();
-                }
+                takePhotoDialog();
                 return true;
 
             case R.id.menu_item_delete_note:
-                AlertDialog.Builder deleteAlertDialog = new AlertDialog.Builder(getActivity());
-                deleteAlertDialog.setTitle(R.string.alert_on_del_title);
-                deleteAlertDialog.setMessage(R.string.alert_on_del_text);
-                deleteAlertDialog.setPositiveButton(R.string.alert_on_del_yes, (dialog, which) -> {
-                    NoteFragment.this.delFromOrderList(note.id);
-//                        dbHelper.delete(note);
-                    dbHelper.deleteRx(note)
-                            .observeOn(Schedulers.io())
-                            .subscribe(() -> {
-                                    },
-                                    Throwable::printStackTrace);
-                    NoteFragment.this.getActivity().onBackPressed();
-                });
-                deleteAlertDialog.setNeutralButton(R.string.alert_on_del_cancel, (dialog, which) -> {
-                });
-                deleteAlertDialog.show();
+                deleteNoteDialog();
                 return true;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void takePhotoDialog() {
+        final AlertDialog.Builder photoAlertDialog = new AlertDialog.Builder(getActivity());
+        photoAlertDialog.setTitle(R.string.alert_on_photo_title);
+        photoAlertDialog.setPositiveButton(R.string.alert_on_photo_cam, (dialog, which) -> {
+            capturePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriPhotoFile);
+            startActivityForResult(capturePhotoIntent, REQUEST_PHOTO_CAM);
+        });
+        photoAlertDialog.setNegativeButton(R.string.alert_on_photo_gallery, (dialog, which) -> {
+            Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            photoPickerIntent.setType("image/*");
+            startActivityForResult(photoPickerIntent, REQUEST_PHOTO_GAL);
+        });
+
+        if (!photoFile.exists()) {
+            photoAlertDialog.setMessage(R.string.alert_on_photo_text_first_photo);
+        } else {
+            photoAlertDialog.setMessage(R.string.alert_on_photo_text_second_photo);
+            photoAlertDialog.setNeutralButton(R.string.alert_on_photo_remove, (dialog, which) -> {
+                AlertDialog.Builder photoDelDialog = new AlertDialog.Builder(getActivity());
+                photoDelDialog.setTitle(R.string.alert_del_photo_title);
+                photoDelDialog.setMessage(R.string.alert_del_photo_text);
+                photoDelDialog.setPositiveButton(R.string.alert_del_photo_yes, (dialog12, which12) -> {
+                    photoFile.delete();
+                    updatePhotoView();
+                });
+                photoDelDialog.setNegativeButton(R.string.alert_del_photo_no, (dialog1, which1) -> {
+                });
+                photoDelDialog.show();
+            });
+        }
+        photoAlertDialog.show();
+    }
+
+    private void deleteNoteDialog() {
+        AlertDialog.Builder deleteAlertDialog = new AlertDialog.Builder(getActivity());
+        deleteAlertDialog.setTitle(R.string.alert_on_del_title);
+        deleteAlertDialog.setMessage(R.string.alert_on_del_text);
+        deleteAlertDialog.setPositiveButton(R.string.alert_on_del_yes, (dialog, which) -> {
+            NoteEditorFragment.this.delFromOrderList(note.id);
+//                        dbHelper.delete(note);
+            dbHelper.deleteRx(note)
+                    .observeOn(Schedulers.io())
+                    .subscribe(() -> {
+                            },
+                            Throwable::printStackTrace);
+            NoteEditorFragment.this.getActivity().onBackPressed();
+        });
+        deleteAlertDialog.setNeutralButton(R.string.alert_on_del_cancel, (dialog, which) -> {
+        });
+        deleteAlertDialog.show();
     }
 
     private void delFromOrderList(UUID uuid) {

@@ -1,7 +1,8 @@
 package com.fed.notes.di;
 
 import com.fed.notes.view.ListFragment;
-import com.fed.notes.view.NoteFragment;
+import com.fed.notes.view.NoteEditorFragment;
+import com.fed.notes.view.NotePreviewFragment;
 
 import javax.inject.Singleton;
 
@@ -15,7 +16,9 @@ import dagger.Component;
 @Component(modules = AppModule.class)
 public interface AppComponent {
 
-    void inject(NoteFragment noteFragment);
+    void inject(NotePreviewFragment noteFragment);
+
+    void inject(NoteEditorFragment listFragment);
 
     void inject(ListFragment listFragment);
 }

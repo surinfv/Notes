@@ -129,7 +129,7 @@ public class ListFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.list_menu, menu);
+        inflater.inflate(R.menu.menu_list, menu);
     }
 
     @Override
@@ -140,15 +140,12 @@ public class ListFragment extends Fragment {
 
                 notesOrder.add(0, note.id);
                 noteDAO.insert(note);
-                showNoteFragment(note);
+
+                ((MainActivity) getActivity()).oneNoteFragmentEditor(note);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void showNoteFragment(Note note) {
-        ((MainActivity) getActivity()).oneNoteFragment(note);
     }
 
     @Override
@@ -195,7 +192,7 @@ public class ListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            showNoteFragment(note);
+            ((MainActivity) getActivity()).oneNoteFragmentPreview(note);
         }
     }
 
