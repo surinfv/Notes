@@ -4,16 +4,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -50,7 +46,7 @@ public class ListFragment extends Fragment {
     public static final String NOTES_ORDER = "notesorder";
 
     private RecyclerView noteRecyclerView;
-    private FloatingActionButton fab;
+    private com.getbase.floatingactionbutton.FloatingActionButton fab;
 
     private NoteAdapter adapter;
     private ItemTouchHelper itemTouchHelper;
@@ -66,7 +62,6 @@ public class ListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
         App.getComponent().inject(this);
         noteDAO = db.getNoteDao();
     }
@@ -80,6 +75,7 @@ public class ListFragment extends Fragment {
         noteRecyclerView = view.findViewById(R.id.note_recycler_view);
         noteRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         fab = view.findViewById(R.id.fab_add_note);
+        fab.setIcon(R.drawable.ic_new_note);
         fab.setOnClickListener((view1 -> createNewNote()));
         return view;
     }
@@ -126,23 +122,6 @@ public class ListFragment extends Fragment {
             Type listType = new TypeToken<ArrayList<UUID>>() {
             }.getType();
             notesOrder = gson.fromJson(json, listType);
-        }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_list, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_item_new_note:
-                createNewNote();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -298,7 +277,6 @@ public class ListFragment extends Fragment {
             noteTmp.description = note.description;
             noteTmp.id = note.id;
             noteTmp.date = note.date;
-
         }
     }
 }

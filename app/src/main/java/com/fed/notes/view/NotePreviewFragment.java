@@ -16,9 +16,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -31,6 +28,8 @@ import com.fed.notes.database.DbHelper;
 import com.fed.notes.database.Note;
 import com.fed.notes.utils.ImageDialog;
 import com.fed.notes.utils.PictureUtils;
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -62,6 +61,7 @@ public class NotePreviewFragment extends Fragment {
     private ImageView photoView;
     private AppBarLayout appBarLayout;
     private Toolbar toolbar;
+    private FloatingActionsMenu fabMenu;
 
     private DateFormat dateFormat;
     private File photoFile;
@@ -101,10 +101,6 @@ public class NotePreviewFragment extends Fragment {
 //                    },
 //                    Throwable::printStackTrace
 //                );
-
-        //check 4 photo:
-
-        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -123,12 +119,30 @@ public class NotePreviewFragment extends Fragment {
             ImageDialog dialog = ImageDialog.newInstance(photoFile.getPath());
             dialog.show(manager, "IMAGE_FULL");
         });
-        init();
+        initFabs(v);
+        updateInfo();
         updatePhotoView();
+
         return v;
     }
 
-    private void init() {
+    private void initFabs(View v) {
+        fabMenu = v.findViewById(R.id.fab_menu);
+
+        FloatingActionButton fabSend = v.findViewById(R.id.fab_send);
+        fabSend.setIcon(R.drawable.ic_send_email);
+        fabSend.setOnClickListener(view -> sendEmailDialog());
+
+        FloatingActionButton fabEdit = v.findViewById(R.id.fab_edit);
+        fabEdit.setIcon(R.drawable.ic_edit_mode);
+        fabEdit.setOnClickListener(view -> editNoteFragment());
+
+        FloatingActionButton fabDel = v.findViewById(R.id.fab_delete);
+        fabDel.setIcon(R.drawable.ic_delete_note);
+        fabDel.setOnClickListener(view -> deleteNoteDialog());
+    }
+
+    private void updateInfo() {
         note = dbHelper.getNote(noteID);
         photoFile = dbHelper.getPhotoFile(note);
 
@@ -139,36 +153,39 @@ public class NotePreviewFragment extends Fragment {
         }
 
         toolbar.setTitle(note.title);
-        noteTitleField.setText(note.title);
-        noteDescriptionField.setText(note.description);
+        if (note.title != null) {
+            noteTitleField.setVisibility(View.VISIBLE);
+            noteTitleField.setText(note.title);
+        } else {
+            noteTitleField.setVisibility(View.GONE);
+        }
+        if (note.description != null) {
+            noteDescriptionField.setVisibility(View.VISIBLE);
+            noteDescriptionField.setText(note.description);
+        } else {
+            noteDescriptionField.setVisibility(View.GONE);
+        }
         dateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
         date.setText(dateFormat.format(note.date));
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_note_preview, menu);
+    private void updatePhotoView() {
+        if (photoFile.exists()) {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(photoFile.getPath(), getActivity());
+            photoView.setImageBitmap(bitmap);
+            appBarLayout.setVisibility(View.VISIBLE);
+            noteTitleField.setVisibility(View.GONE);
+        } else {
+            appBarLayout.setVisibility(View.GONE);
+            noteTitleField.setVisibility(View.VISIBLE);
+        }
+//        photoView.setImageURI(Uri.fromFile(photoFile));
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_item_send_via_email:
-                sendEmailDialog();
-                return true;
-
-            case R.id.menu_item_edit_note:
-                ((MainActivity) getActivity()).oneNoteFragmentEditor(note);
-                return true;
-
-            case R.id.menu_item_delete_note:
-                deleteNoteDialog();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+    public void onResume() {
+        super.onResume();
+        fabMenu.collapse();
     }
 
     private void sendEmailDialog() {
@@ -199,6 +216,10 @@ public class NotePreviewFragment extends Fragment {
             });
             eMailIntentAlertDialog.show();
         }
+    }
+
+    private void editNoteFragment() {
+        ((MainActivity) getActivity()).oneNoteFragmentEditor(note);
     }
 
     private void deleteNoteDialog() {
@@ -233,18 +254,5 @@ public class NotePreviewFragment extends Fragment {
         json = gson.toJson(IDs);
         editor.putString(ListFragment.NOTES_ORDER, json);
         editor.apply();
-    }
-
-    private void updatePhotoView() {
-        if (photoFile.exists()) {
-            Bitmap bitmap = PictureUtils.getScaledBitmap(photoFile.getPath(), getActivity());
-            photoView.setImageBitmap(bitmap);
-            appBarLayout.setVisibility(View.VISIBLE);
-            noteTitleField.setVisibility(View.GONE);
-        } else {
-            appBarLayout.setVisibility(View.GONE);
-            noteTitleField.setVisibility(View.VISIBLE);
-        }
-//        photoView.setImageURI(Uri.fromFile(photoFile));
     }
 }

@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="background_material_dark">#2d2d2d</color>
-    <color name="snack_bar_background">#7fffffff</color>
+    <color name="snack_bar_background">#ff212121</color>
 
-
+    <color name="fab_normal">#FF009999</color>
+    <color name="fab_pressed">#FF005F5F</color>
+    <color name="fab_shared">#FF2D5DED</color>
+    <color name="fab_shared_pressed">#FF1E3E9E</color>
+    <color name="fab_edit">#FFFFCF40</color>
+    <color name="fab_edit_pressed">#FF977A24</color>
+    <color name="fab_delete">#FFFF4040</color>
+    <color name="fab_delete_pressed">#FFB72C2C</color>
 </resources>

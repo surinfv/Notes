@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="false">
@@ -14,31 +17,28 @@
         <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:fitsSystemWindows="false"
             app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Title"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:layout_scrollInterpolator="@android:anim/decelerate_interpolator"
-            app:toolbarId="@+id/toolbar"
-            android:fitsSystemWindows="false"
-            app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Title"
-            >
+            app:toolbarId="@+id/toolbar">
 
             <ImageView
                 android:id="@+id/note_photo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:fitsSystemWindows="false"
                 android:scaleType="centerCrop"
                 android:src="@android:drawable/sym_def_app_icon"
-                android:fitsSystemWindows="false"
-                app:layout_collapseMode="parallax"
-                />
+                app:layout_collapseMode="parallax" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                >
-            </android.support.v7.widget.Toolbar>
+                app:layout_collapseMode="pin"/>
+
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
@@ -59,19 +59,19 @@
                 android:id="@+id/note_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:hint="@string/note_title_hint"
-                android:textSize="22sp"
                 android:inputType="text"
-                android:textStyle="bold"
-                android:gravity="center"/>
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/note_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/note_comment_hint"
-                android:textSize="18sp"
                 android:inputType="textMultiLine"
+                android:textSize="18sp"
 
                 />
 
@@ -85,4 +85,46 @@
 
     </android.support.v4.widget.NestedScrollView>
 
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/fab_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="@dimen/fab_bottom_padding"
+        android:layout_marginEnd="@dimen/fab_right_padding"
+        android:layout_marginRight="@dimen/fab_right_padding"
+        fab:fab_addButtonPlusIconColor="@color/snack_bar_background">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_send"
+            app:fab_colorNormal="@color/fab_shared"
+            app:fab_colorPressed="@color/fab_shared_pressed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_title="@string/menu_send_via_email" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_edit"
+            app:fab_colorNormal="@color/fab_edit"
+            app:fab_colorPressed="@color/fab_edit_pressed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_title="@string/menu_edit_note" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_delete"
+            app:fab_colorNormal="@color/fab_delete"
+            app:fab_colorPressed="@color/fab_delete_pressed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_title="@string/menu_delete_note" />
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
 </android.support.design.widget.CoordinatorLayout>
+
+    <!--fab menu flags-->
+    <!--fab:fab_expandDirection="down"-->
+
+    <!--fab -->
+    <!--fab:fab_icon="@drawable/ic_fab_star"-->
+

@@ -2,16 +2,13 @@ package com.fed.notes.view;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
@@ -20,9 +17,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -36,20 +30,15 @@ import com.fed.notes.database.Note;
 import com.fed.notes.utils.EditTextModif;
 import com.fed.notes.utils.ImageDialog;
 import com.fed.notes.utils.PictureUtils;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -75,7 +64,7 @@ public class NoteEditorFragment extends Fragment {
     private EditTextModif noteDescriptionField;
     private TextView date;
     private ImageView photoView;
-    private FloatingActionButton fab;
+    private com.getbase.floatingactionbutton.FloatingActionButton fab;
 
     private DateFormat dateFormat;
     private File photoFile;
@@ -98,6 +87,7 @@ public class NoteEditorFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         App.getComponent().inject(this);
 
         UUID noteID = (UUID) getArguments().getSerializable(ARGS_NOTE_ID);
@@ -132,8 +122,6 @@ public class NoteEditorFragment extends Fragment {
         } else {
             uriPhotoFile = Uri.fromFile(photoFile);
         }
-
-        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -193,6 +181,7 @@ public class NoteEditorFragment extends Fragment {
         });
 
         fab = v.findViewById(R.id.fab_photo);
+        fab.setIcon(R.drawable.ic_take_photo);
         fab.setOnClickListener((view1 -> takePhotoDialog()));
         return v;
     }
@@ -207,28 +196,6 @@ public class NoteEditorFragment extends Fragment {
                 .subscribe(() -> {
                         },
                         Throwable::printStackTrace);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_note_editor, menu);
-
-        MenuItem photoButton = menu.findItem(R.id.menu_item_take_photo);
-        photoButton.setVisible(canTakePhoto);
-        photoButton.setEnabled(canTakePhoto);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_item_take_photo:
-                takePhotoDialog();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     private void takePhotoDialog() {
