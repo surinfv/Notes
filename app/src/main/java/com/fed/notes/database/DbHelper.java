@@ -29,17 +29,17 @@ public class DbHelper {
         return Single.fromCallable(() -> noteDAO.getNote(uuid));
     }
 
-//    public void insert(Note note) {
-//        noteDAO.insert(note);
-//    }
+    public void insert(Note note) {
+        noteDAO.insert(note);
+    }
 
     public Completable insertRx(Note note) {
         return Completable.fromAction(() -> noteDAO.insert(note));
     }
 
-//    public void delete(Note note) {
-//        noteDAO.delete(note);
-//    }
+    public void delete(Note note) {
+        noteDAO.delete(note);
+    }
 
     public Completable deleteRx(Note note) {
         return Completable.fromAction(() -> noteDAO.delete(note));

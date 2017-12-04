@@ -17,10 +17,8 @@ import android.widget.Toast;
 
 import com.fed.notes.App;
 import com.fed.notes.R;
-import com.fed.notes.database.AppDatabase;
 import com.fed.notes.database.DbHelper;
 import com.fed.notes.database.Note;
-import com.fed.notes.database.NoteDAO;
 import com.fed.notes.touchhelper.ItemTouchHelperAdapter;
 import com.fed.notes.touchhelper.SimpleItemTouchHelperCallback;
 import com.google.gson.Gson;
@@ -37,6 +35,8 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
+import io.reactivex.schedulers.Schedulers;
+
 /**
  * Created by f on 10.05.2017.
  */
@@ -49,12 +49,8 @@ public class ListFragment extends Fragment {
     private com.getbase.floatingactionbutton.FloatingActionButton fab;
 
     private NoteAdapter adapter;
-    private ItemTouchHelper itemTouchHelper;
     private SharedPreferences shPref;
     private List<UUID> notesOrder;
-    @Inject
-    AppDatabase db;
-    private NoteDAO noteDAO;
 
     @Inject
     DbHelper dbHelper;
@@ -63,7 +59,6 @@ public class ListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         App.getComponent().inject(this);
-        noteDAO = db.getNoteDao();
     }
 
     @Nullable
@@ -86,7 +81,7 @@ public class ListFragment extends Fragment {
         updateUI();
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
-        itemTouchHelper = new ItemTouchHelper(callback);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(noteRecyclerView);
     }
 
@@ -96,12 +91,12 @@ public class ListFragment extends Fragment {
         //fixme add reactive getNotes
         List<Note> notes = new ArrayList<>();
         if (notesOrder.size() > 0) {
-            //TODO: get notes list in one query in order from orderlist
+            //TODO: get notes list in one query in order from order list
 //            UUID[] ids = new UUID[notesOrder.size()];
 //            notesOrder.toArray(ids);
 //            notes = noteDAO.getNotes(ids);
             for (UUID id : notesOrder) {
-                notes.add(noteDAO.getNote(id));
+                notes.add(dbHelper.getNote(id));
             }
         }
 //        if (adapter == null) {
@@ -129,9 +124,11 @@ public class ListFragment extends Fragment {
         Note note = new Note();
 
         notesOrder.add(0, note.id);
-        noteDAO.insert(note);
-
-        ((MainActivity) getActivity()).oneNoteFragmentEditor(note);
+        dbHelper.insertRx(note)
+                .subscribeOn(Schedulers.io())
+                .subscribe(() ->
+                                ((MainActivity) getActivity()).oneNoteFragmentEditor(note),
+                        Throwable::printStackTrace);
     }
 
     @Override
@@ -259,7 +256,11 @@ public class ListFragment extends Fragment {
                 @Override
                 public void onDismissed(Snackbar snackbar, int event) {
                     if (event != Snackbar.Callback.DISMISS_EVENT_ACTION) {
-                        noteDAO.delete(noteTmp);
+                        dbHelper.deleteRx(noteTmp)
+                                .subscribeOn(Schedulers.io())
+                                .subscribe(() -> {
+                                        },
+                                        Throwable::printStackTrace);
                     }
                 }
 

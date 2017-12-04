@@ -16,9 +16,9 @@ import dagger.Component;
 @Component(modules = AppModule.class)
 public interface AppComponent {
 
-    void inject(NotePreviewFragment noteFragment);
+    void inject(NotePreviewFragment notePreviewFragment);
 
-    void inject(NoteEditorFragment listFragment);
+    void inject(NoteEditorFragment noteEditorFragment);
 
     void inject(ListFragment listFragment);
 }
