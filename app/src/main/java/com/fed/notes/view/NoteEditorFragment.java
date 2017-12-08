@@ -189,14 +189,24 @@ public class NoteEditorFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        photoFile = dbHelper.getPhotoFile(note);
+//        if (!noteEmpty()) {
 //        dbHelper.insert(note);
-        dbHelper.insertRx(note)
-                .subscribeOn(Schedulers.io())
-                .subscribe(() -> {
-                        },
-                        Throwable::printStackTrace);
+            dbHelper.insertRx(note)
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(() -> {
+                            },
+                            Throwable::printStackTrace);
+//        } else {
+//            dbHelper.delete(note);
+//        }
     }
+
+//    private boolean noteEmpty() {
+//        boolean photofileExist = photoFile.exists();
+//        boolean discriptionExist = note.description != null && note.description.length() > 0;
+//        boolean titleExist = note.title != null && note.title.length() > 0;
+//        return !photofileExist && !discriptionExist && !titleExist;
+//    }
 
     private void takePhotoDialog() {
         final AlertDialog.Builder photoAlertDialog = new AlertDialog.Builder(getActivity());

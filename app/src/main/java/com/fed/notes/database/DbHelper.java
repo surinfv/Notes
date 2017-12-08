@@ -42,7 +42,11 @@ public class DbHelper {
     }
 
     public Completable deleteRx(Note note) {
-        return Completable.fromAction(() -> noteDAO.delete(note));
+        return Completable.fromAction(() -> {
+            File photoFile = new File(note.getPhotoFilename());
+            photoFile.delete();
+            noteDAO.delete(note);
+        });
     }
 
     public File getPhotoFile(Note note) {
