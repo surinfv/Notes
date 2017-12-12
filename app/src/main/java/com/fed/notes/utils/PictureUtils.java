@@ -24,18 +24,18 @@ public class PictureUtils {
         BitmapFactory.decodeFile(path, options);
 
         float scrWidth = options.outWidth;
-        float scrHeigth = options.outHeight;
+        float scrHeight = options.outHeight;
 
 //        Log.e("LOOKscrWidth", "" + scrWidth);
-//        Log.e("LOOKscrHeight", "" + scrHeigth);
+//        Log.e("LOOKscrHeight", "" + scrHeight);
 //        Log.e("LOOKdestWidth", "" + destWidth);
 //        Log.e("LOOKdestHeight", "" + destHeight);
 
         //вычисление степени масштабирования
         int inSampleSize = 1;
-        if (scrHeigth > destHeight || scrWidth > destWidth) {
-            if (scrWidth > scrHeigth) {
-                inSampleSize = Math.round(scrHeigth / destHeight);
+        if (scrHeight > destHeight || scrWidth > destWidth) {
+            if (scrWidth > scrHeight) {
+                inSampleSize = Math.round(scrHeight / destHeight);
             } else {
                 inSampleSize = Math.round(scrWidth / destWidth);
             }

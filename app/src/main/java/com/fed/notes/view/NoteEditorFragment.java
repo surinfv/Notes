@@ -183,8 +183,8 @@ public class NoteEditorFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroy() {
+        super.onDestroy();
         if (!noteEmpty()) {
             dbHelper.insert(note);
             dbHelper.insertRx(note)

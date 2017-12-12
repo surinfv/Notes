@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
             fragment = new ListFragment();
             fm.beginTransaction()
                     .add(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
                     .commit();
         }
     }

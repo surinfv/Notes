@@ -118,6 +118,8 @@ public class NotePreviewFragment extends Fragment {
             initFabs(v);
             updateInfo();
             updatePhotoView();
+        } else {
+            getActivity().getSupportFragmentManager().popBackStack();
         }
         return v;
     }
@@ -233,8 +235,5 @@ public class NotePreviewFragment extends Fragment {
     public void onResume() {
         super.onResume();
         fabMenu.collapse();
-        if (note == null) {
-            getActivity().getSupportFragmentManager().popBackStack();
-        }
     }
 }
