@@ -38,13 +38,13 @@ public class DbHelper {
     }
 
     public void delete(Note note) {
+        getPhotoFile(note).delete();
         noteDAO.delete(note);
     }
 
     public Completable deleteRx(Note note) {
         return Completable.fromAction(() -> {
-            File photoFile = new File(note.getPhotoFilename());
-            photoFile.delete();
+            getPhotoFile(note).delete();
             noteDAO.delete(note);
         });
     }

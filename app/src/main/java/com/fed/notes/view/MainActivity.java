@@ -26,11 +26,12 @@ public class MainActivity extends AppCompatActivity {
             fragment = new ListFragment();
             fm.beginTransaction()
                     .add(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
                     .commit();
         }
     }
 
-    public void oneNoteFragmentPreview(Note note) {
+    public void openNoteFragmentPreview(Note note) {
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = NotePreviewFragment.newInstance(note.id);
         fm.beginTransaction()
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    public void oneNoteFragmentEditor(Note note) {
+    public void openNoteFragmentEditor(Note note) {
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = NoteEditorFragment.newInstance(note.id);
         fm.beginTransaction()

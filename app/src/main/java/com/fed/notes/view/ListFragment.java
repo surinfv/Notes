@@ -1,8 +1,6 @@
 package com.fed.notes.view;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -21,10 +19,8 @@ import com.fed.notes.database.DbHelper;
 import com.fed.notes.database.Note;
 import com.fed.notes.touchhelper.ItemTouchHelperAdapter;
 import com.fed.notes.touchhelper.SimpleItemTouchHelperCallback;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.fed.notes.utils.NotesOrderUtil;
 
-import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,18 +34,15 @@ import javax.inject.Inject;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by f on 10.05.2017.
+ * Created by Fedor SURIN on 10.05.2017.
  */
 
 public class ListFragment extends Fragment {
-
-    public static final String NOTES_ORDER = "notesorder";
 
     private RecyclerView noteRecyclerView;
     private com.getbase.floatingactionbutton.FloatingActionButton fab;
 
     private NoteAdapter adapter;
-    private SharedPreferences shPref;
     private List<UUID> notesOrder;
 
     @Inject
@@ -86,7 +79,7 @@ public class ListFragment extends Fragment {
     }
 
     private void updateUI() {
-        loadOrder();
+        notesOrder = NotesOrderUtil.loadOrder(getContext());
 
         //fixme add reactive getNotes
         List<Note> notes = new ArrayList<>();
@@ -108,18 +101,6 @@ public class ListFragment extends Fragment {
 //        }
     }
 
-    private void loadOrder() {
-        notesOrder = new ArrayList<>();
-        shPref = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String json = shPref.getString(NOTES_ORDER, "");
-        if (!json.equals("")) {
-            Gson gson = new Gson();
-            Type listType = new TypeToken<ArrayList<UUID>>() {
-            }.getType();
-            notesOrder = gson.fromJson(json, listType);
-        }
-    }
-
     private void createNewNote() {
         Note note = new Note();
 
@@ -127,25 +108,14 @@ public class ListFragment extends Fragment {
         dbHelper.insertRx(note)
                 .subscribeOn(Schedulers.io())
                 .subscribe(() ->
-                                ((MainActivity) getActivity()).oneNoteFragmentEditor(note),
+                                ((MainActivity) getActivity()).openNoteFragmentEditor(note),
                         Throwable::printStackTrace);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        saveOrder();
-    }
-
-    private void saveOrder() {
-        shPref = PreferenceManager.getDefaultSharedPreferences(getContext());
-        SharedPreferences.Editor editor = shPref.edit();
-
-        Gson gson = new Gson();
-        String json = gson.toJson(notesOrder);
-
-        editor.putString(NOTES_ORDER, json);
-        editor.apply();
+        NotesOrderUtil.saveOrder(notesOrder, getContext());
     }
 
     private class NoteHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -155,7 +125,7 @@ public class ListFragment extends Fragment {
         private TextView itemDate;
         private Note note;
 
-        public NoteHolder(View itemView) {
+        NoteHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
 
@@ -164,7 +134,7 @@ public class ListFragment extends Fragment {
             itemDate = itemView.findViewById(R.id.item_list_date);
         }
 
-        public void bindNote(Note note) {
+        void bindNote(Note note) {
             if (note == null) return;
             this.note = note;
             itemTitle.setText(this.note.title);
@@ -175,7 +145,7 @@ public class ListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            ((MainActivity) getActivity()).oneNoteFragmentPreview(note);
+            ((MainActivity) getActivity()).openNoteFragmentPreview(note);
         }
     }
 
@@ -195,7 +165,7 @@ public class ListFragment extends Fragment {
             }
         };
 
-        public NoteAdapter(List<Note> notes) {
+        NoteAdapter(List<Note> notes) {
             this.notes = notes;
         }
 

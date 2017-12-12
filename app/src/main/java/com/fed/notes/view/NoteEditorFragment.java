@@ -29,6 +29,7 @@ import com.fed.notes.database.DbHelper;
 import com.fed.notes.database.Note;
 import com.fed.notes.utils.EditTextModif;
 import com.fed.notes.utils.ImageDialog;
+import com.fed.notes.utils.NotesOrderUtil;
 import com.fed.notes.utils.PictureUtils;
 
 import java.io.File;
@@ -58,15 +59,9 @@ public class NoteEditorFragment extends Fragment {
     private static final int REQUEST_PHOTO_CAM = 0;
     private static final int REQUEST_PHOTO_GAL = 1;
 
-    private Note note;
-
-    private EditTextModif noteTitleField;
-    private EditTextModif noteDescriptionField;
-    private TextView date;
     private ImageView photoView;
-    private com.getbase.floatingactionbutton.FloatingActionButton fab;
 
-    private DateFormat dateFormat;
+    private Note note;
     private File photoFile;
     private boolean canTakePhoto;
     private Intent capturePhotoIntent;
@@ -129,7 +124,7 @@ public class NoteEditorFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_note_editor, container, false);
 
-        noteTitleField = v.findViewById(R.id.note_title);
+        EditTextModif noteTitleField = v.findViewById(R.id.note_title);
         noteTitleField.setText(note.title);
         noteTitleField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -148,7 +143,7 @@ public class NoteEditorFragment extends Fragment {
             }
         });
 
-        noteDescriptionField = v.findViewById(R.id.note_description);
+        EditTextModif noteDescriptionField = v.findViewById(R.id.note_description);
         noteDescriptionField.setText(note.description);
         noteDescriptionField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -167,46 +162,52 @@ public class NoteEditorFragment extends Fragment {
             }
         });
 
-        date = v.findViewById(R.id.create_date);
-        dateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
+        TextView date = v.findViewById(R.id.create_date);
+        DateFormat dateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
         date.setText(dateFormat.format(note.date));
+
+        com.getbase.floatingactionbutton.FloatingActionButton fab = v.findViewById(R.id.fab_photo);
+        fab.setIcon(R.drawable.ic_take_photo);
+        fab.setOnClickListener((view1 -> takePhotoDialog()));
+        if (!canTakePhoto) fab.setVisibility(View.GONE);
 
         photoView = v.findViewById(R.id.note_photo);
         updatePhotoView();
-
         photoView.setOnClickListener(v1 -> {
             FragmentManager manager = getFragmentManager();
             ImageDialog dialog = ImageDialog.newInstance(photoFile.getPath());
             dialog.show(manager, "IMAGE_FULL");
         });
 
-        fab = v.findViewById(R.id.fab_photo);
-        fab.setIcon(R.drawable.ic_take_photo);
-        fab.setOnClickListener((view1 -> takePhotoDialog()));
         return v;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-//        if (!noteEmpty()) {
-//        dbHelper.insert(note);
+        if (!noteEmpty()) {
+            dbHelper.insert(note);
             dbHelper.insertRx(note)
                     .subscribeOn(Schedulers.io())
                     .subscribe(() -> {
                             },
                             Throwable::printStackTrace);
-//        } else {
-//            dbHelper.delete(note);
-//        }
+        } else {
+            removeNote();
+        }
     }
 
-//    private boolean noteEmpty() {
-//        boolean photofileExist = photoFile.exists();
-//        boolean discriptionExist = note.description != null && note.description.length() > 0;
-//        boolean titleExist = note.title != null && note.title.length() > 0;
-//        return !photofileExist && !discriptionExist && !titleExist;
-//    }
+    private boolean noteEmpty() {
+        boolean photofileExist = photoFile.exists();
+        boolean discriptionExist = note.description != null && note.description.length() > 0;
+        boolean titleExist = note.title != null && note.title.length() > 0;
+        return !photofileExist && !discriptionExist && !titleExist;
+    }
+
+    private void removeNote() {
+        NotesOrderUtil.removeNoteFromOrderList(note.id, getContext());
+        dbHelper.delete(note);
+    }
 
     private void takePhotoDialog() {
         final AlertDialog.Builder photoAlertDialog = new AlertDialog.Builder(getActivity());
@@ -239,6 +240,17 @@ public class NoteEditorFragment extends Fragment {
             });
         }
         photoAlertDialog.show();
+    }
+
+    private void updatePhotoView() {
+        if (photoFile.exists()) {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(photoFile.getPath(), getActivity());
+            photoView.setImageBitmap(bitmap);
+            photoView.setVisibility(View.VISIBLE);
+        } else {
+            photoView.setVisibility(View.GONE);
+        }
+//        photoView.setImageURI(Uri.fromFile(photoFile));
     }
 
     @Override
@@ -275,16 +287,5 @@ public class NoteEditorFragment extends Fragment {
             }
             updatePhotoView();
         }
-    }
-
-    private void updatePhotoView() {
-        if (photoFile.exists()) {
-            Bitmap bitmap = PictureUtils.getScaledBitmap(photoFile.getPath(), getActivity());
-            photoView.setImageBitmap(bitmap);
-            photoView.setVisibility(View.VISIBLE);
-        } else {
-            photoView.setVisibility(View.GONE);
-        }
-//        photoView.setImageURI(Uri.fromFile(photoFile));
     }
 }

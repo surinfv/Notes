@@ -1,12 +1,10 @@
 package com.fed.notes.view;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
@@ -27,18 +25,14 @@ import com.fed.notes.R;
 import com.fed.notes.database.DbHelper;
 import com.fed.notes.database.Note;
 import com.fed.notes.utils.ImageDialog;
+import com.fed.notes.utils.NotesOrderUtil;
 import com.fed.notes.utils.PictureUtils;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -54,6 +48,7 @@ public class NotePreviewFragment extends Fragment {
     private static final String ARGS_NOTE_ID = "argsnoteid";
 
     private Note note;
+    private UUID noteID;
 
     private TextView noteTitleField;
     private TextView noteDescriptionField;
@@ -61,12 +56,10 @@ public class NotePreviewFragment extends Fragment {
     private ImageView photoView;
     private AppBarLayout appBarLayout;
     private Toolbar toolbar;
-    private FloatingActionsMenu fabMenu;
 
-    private DateFormat dateFormat;
+    private FloatingActionsMenu fabMenu;
     private File photoFile;
     private Uri uriPhotoFile;
-    private UUID noteID;
 
     @Inject
     DbHelper dbHelper;
@@ -119,10 +112,13 @@ public class NotePreviewFragment extends Fragment {
             ImageDialog dialog = ImageDialog.newInstance(photoFile.getPath());
             dialog.show(manager, "IMAGE_FULL");
         });
-        initFabs(v);
-        updateInfo();
-        updatePhotoView();
 
+        note = dbHelper.getNote(noteID);
+        if (note != null) {
+            initFabs(v);
+            updateInfo();
+            updatePhotoView();
+        }
         return v;
     }
 
@@ -143,7 +139,6 @@ public class NotePreviewFragment extends Fragment {
     }
 
     private void updateInfo() {
-        note = dbHelper.getNote(noteID);
         photoFile = dbHelper.getPhotoFile(note);
 
         if (Build.VERSION.SDK_INT > 23) {
@@ -165,7 +160,7 @@ public class NotePreviewFragment extends Fragment {
         } else {
             noteDescriptionField.setVisibility(View.GONE);
         }
-        dateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
+        DateFormat dateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
         date.setText(dateFormat.format(note.date));
     }
 
@@ -180,12 +175,6 @@ public class NotePreviewFragment extends Fragment {
             noteTitleField.setVisibility(View.VISIBLE);
         }
 //        photoView.setImageURI(Uri.fromFile(photoFile));
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        fabMenu.collapse();
     }
 
     private void sendEmailDialog() {
@@ -219,7 +208,7 @@ public class NotePreviewFragment extends Fragment {
     }
 
     private void editNoteFragment() {
-        ((MainActivity) getActivity()).oneNoteFragmentEditor(note);
+        ((MainActivity) getActivity()).openNoteFragmentEditor(note);
     }
 
     private void deleteNoteDialog() {
@@ -227,8 +216,7 @@ public class NotePreviewFragment extends Fragment {
         deleteAlertDialog.setTitle(R.string.alert_on_del_title);
         deleteAlertDialog.setMessage(R.string.alert_on_del_text);
         deleteAlertDialog.setPositiveButton(R.string.alert_on_del_yes, (dialog, which) -> {
-            NotePreviewFragment.this.delFromOrderList(note.id);
-//                        dbHelper.delete(note);
+            NotesOrderUtil.removeNoteFromOrderList(note.id, getContext());
             dbHelper.deleteRx(note)
                     .observeOn(Schedulers.io())
                     .subscribe(() -> {
@@ -241,18 +229,12 @@ public class NotePreviewFragment extends Fragment {
         deleteAlertDialog.show();
     }
 
-    private void delFromOrderList(UUID uuid) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String json = prefs.getString(ListFragment.NOTES_ORDER, "");
-        Gson gson = new Gson();
-        Type listType = new TypeToken<ArrayList<UUID>>() {
-        }.getType();
-        List<UUID> IDs = gson.fromJson(json, listType);
-        IDs.remove(uuid);
-
-        SharedPreferences.Editor editor = prefs.edit();
-        json = gson.toJson(IDs);
-        editor.putString(ListFragment.NOTES_ORDER, json);
-        editor.apply();
+    @Override
+    public void onResume() {
+        super.onResume();
+        fabMenu.collapse();
+        if (note == null) {
+            getActivity().getSupportFragmentManager().popBackStack();
+        }
     }
 }
