@@ -3,8 +3,8 @@
 
     <string name="date_format" translatable="true">H:mm EEEE, d MMM yyyy</string>
 
-    <string name="note_title_hint">title</string>
-    <string name="note_comment_hint">enter comment here</string>
+    <string name="note_title_hint">add title here</string>
+    <string name="note_comment_hint">add comment here</string>
 
     <string name="menu_new_note">new note</string>
 

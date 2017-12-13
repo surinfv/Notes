@@ -21,7 +21,7 @@
     <string name="menu_send_via_email">отправить</string>
     <string name="menu_take_photo">изображение</string>
     <string name="note_comment_hint">введите комментарий</string>
-    <string name="note_title_hint">название</string>
+    <string name="note_title_hint">введите название</string>
     <string name="email_text">"из приложения Заметки: "</string>
     <string name="snackbar_undo">ОТМЕНА</string>
     <string name="snackbar_delete">" удалено"</string>
