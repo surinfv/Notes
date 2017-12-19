@@ -104,7 +104,6 @@ class NotePreviewFragment : Fragment() {
 
     private fun updateInfo() {
         photoFile = dbHelper.getPhotoFile(note)
-
         uriPhotoFile = if (Build.VERSION.SDK_INT > 23) {
             FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID + ".provider", photoFile)
         } else {
@@ -113,19 +112,19 @@ class NotePreviewFragment : Fragment() {
 
         toolbar.title = note?.title
         if (note?.title != null) {
-            note_title.visibility = View.VISIBLE
-            note_title.text = note?.title
+            note_title_text_view.visibility = View.VISIBLE
+            note_title_text_view.text = note?.title
         } else {
-            note_title.visibility = View.GONE
+            note_title_text_view.visibility = View.GONE
         }
         if (note?.description != null) {
-            note_description.visibility = View.VISIBLE
-            note_description.text = note?.description
+            note_description_text_view.visibility = View.VISIBLE
+            note_description_text_view.text = note?.description
         } else {
-            note_description.visibility = View.GONE
+            note_description_text_view.visibility = View.GONE
         }
         val dateFormat = SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH)
-        note_date.text = dateFormat.format(note?.date)
+        note_date_text_view.text = dateFormat.format(note?.date)
     }
 
     private fun updatePhotoView() {
@@ -134,10 +133,10 @@ class NotePreviewFragment : Fragment() {
             note_photo_image_view.setImageBitmap(bitmap)
             note_photo_image_view.setOnClickListener { showPhotoDialog() }
             appbar_layout.visibility = View.VISIBLE
-            note_title.visibility = View.GONE
+            note_title_text_view.visibility = View.GONE
         } else {
             appbar_layout.visibility = View.GONE
-            note_title.visibility = View.VISIBLE
+            note_title_text_view.visibility = View.VISIBLE
         }
         //        photoView.setImageURI(Uri.fromFile(photoFile));
     }
