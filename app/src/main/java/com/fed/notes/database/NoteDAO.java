@@ -21,13 +21,13 @@ public interface NoteDAO {
     @Delete
     void delete(Note note);
 
+    @Query("SELECT * FROM notes WHERE id = :id")
+    Note getNote(UUID id);
+
 // --Commented out by Inspection START (03.11.2017 12:11):
 //    @Query("SELECT * FROM notes")
 //    List<Note> getAllNotes();
 // --Commented out by Inspection STOP (03.11.2017 12:11)
-
-    @Query("SELECT * FROM notes WHERE id = :id")
-    Note getNote(UUID id);
 
 // --Commented out by Inspection START (03.11.2017 12:11):
 //    @Query("SELECT * FROM notes WHERE id IN(:ids)")

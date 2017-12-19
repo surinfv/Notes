@@ -9,7 +9,7 @@
     android:fitsSystemWindows="false">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
+        android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="300sp"
         android:fitsSystemWindows="false">
@@ -25,7 +25,7 @@
             app:toolbarId="@+id/toolbar">
 
             <ImageView
-                android:id="@+id/note_photo"
+                android:id="@+id/note_photo_image_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="false"
@@ -76,7 +76,7 @@
                 />
 
             <TextView
-                android:id="@+id/create_date"
+                android:id="@+id/note_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="test date 2017" />

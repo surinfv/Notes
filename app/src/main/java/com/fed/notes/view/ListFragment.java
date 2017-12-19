@@ -104,7 +104,7 @@ public class ListFragment extends Fragment {
     private void createNewNote() {
         Note note = new Note();
 
-        notesOrder.add(0, note.id);
+        notesOrder.add(0, note.getId());
         dbHelper.insertRx(note)
                 .subscribeOn(Schedulers.io())
                 .subscribe(() ->
@@ -137,10 +137,10 @@ public class ListFragment extends Fragment {
         void bindNote(Note note) {
             if (note == null) return;
             this.note = note;
-            itemTitle.setText(this.note.title);
-            itemDescription.setText(this.note.description);
+            itemTitle.setText(this.note.getTitle());
+            itemDescription.setText(this.note.getDescription());
             DateFormat dateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
-            itemDate.setText(dateFormat.format(this.note.date));
+            itemDate.setText(dateFormat.format(this.note.getDate()));
         }
 
         @Override
@@ -158,9 +158,9 @@ public class ListFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 ///return just deleted note
-                Toast.makeText(getActivity(), noteTmp.title + getResources().getString(R.string.snackbar_return), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), noteTmp.getTitle() + getResources().getString(R.string.snackbar_return), Toast.LENGTH_SHORT).show();
                 notes.add(noteTmpPos, noteTmp);
-                notesOrder.add(noteTmpPos, noteTmp.id);
+                notesOrder.add(noteTmpPos, noteTmp.getId());
                 notifyItemInserted(noteTmpPos);
             }
         };
@@ -216,7 +216,7 @@ public class ListFragment extends Fragment {
             notesOrder.remove(position);
             notifyItemRemoved(position);
 
-            Snackbar mSnackBar = Snackbar.make(noteRecyclerView, noteTmp.title + getResources().getString(R.string.snackbar_delete), Snackbar.LENGTH_LONG);
+            Snackbar mSnackBar = Snackbar.make(noteRecyclerView, noteTmp.getTitle() + getResources().getString(R.string.snackbar_delete), Snackbar.LENGTH_LONG);
             View snackbarView = mSnackBar.getView();
             snackbarView.setBackgroundColor(getResources().getColor(R.color.snack_bar_background));
             mSnackBar.setAction(getResources().getString(R.string.snackbar_undo), snackbarOnClickListener);
@@ -244,10 +244,10 @@ public class ListFragment extends Fragment {
         private void cloneNote(Note note, int pos) {
             noteTmpPos = pos;
             noteTmp = new Note();
-            noteTmp.title = note.title;
-            noteTmp.description = note.description;
-            noteTmp.id = note.id;
-            noteTmp.date = note.date;
+            noteTmp.setTitle(note.getTitle());
+            noteTmp.setDescription(note.getDescription());
+            noteTmp.setId(note.getId());
+            noteTmp.setDate(note.getDate());
         }
     }
 }

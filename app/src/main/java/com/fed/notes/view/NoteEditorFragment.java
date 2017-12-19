@@ -125,7 +125,7 @@ public class NoteEditorFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_note_editor, container, false);
 
         EditTextModif noteTitleField = v.findViewById(R.id.note_title);
-        noteTitleField.setText(note.title);
+        noteTitleField.setText(note.getTitle());
         noteTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -134,7 +134,7 @@ public class NoteEditorFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                note.title = s.toString();
+                note.setTitle(s.toString());
             }
 
             @Override
@@ -144,7 +144,7 @@ public class NoteEditorFragment extends Fragment {
         });
 
         EditTextModif noteDescriptionField = v.findViewById(R.id.note_description);
-        noteDescriptionField.setText(note.description);
+        noteDescriptionField.setText(note.getDescription());
         noteDescriptionField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -153,7 +153,7 @@ public class NoteEditorFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                note.description = s.toString();
+                note.setDescription(s.toString());
             }
 
             @Override
@@ -162,16 +162,16 @@ public class NoteEditorFragment extends Fragment {
             }
         });
 
-        TextView date = v.findViewById(R.id.create_date);
+        TextView date = v.findViewById(R.id.note_date);
         DateFormat dateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.ENGLISH);
-        date.setText(dateFormat.format(note.date));
+        date.setText(dateFormat.format(note.getDate()));
 
         com.getbase.floatingactionbutton.FloatingActionButton fab = v.findViewById(R.id.fab_photo);
         fab.setIcon(R.drawable.ic_take_photo);
         fab.setOnClickListener((view1 -> takePhotoDialog()));
         if (!canTakePhoto) fab.setVisibility(View.GONE);
 
-        photoView = v.findViewById(R.id.note_photo);
+        photoView = v.findViewById(R.id.note_photo_image_view);
         updatePhotoView();
         photoView.setOnClickListener(v1 -> {
             FragmentManager manager = getFragmentManager();
@@ -199,13 +199,13 @@ public class NoteEditorFragment extends Fragment {
 
     private boolean noteEmpty() {
         boolean photofileExist = photoFile.exists();
-        boolean discriptionExist = note.description != null && note.description.length() > 0;
-        boolean titleExist = note.title != null && note.title.length() > 0;
+        boolean discriptionExist = note.getDescription() != null && note.getDescription().length() > 0;
+        boolean titleExist = note.getTitle() != null && note.getTitle().length() > 0;
         return !photofileExist && !discriptionExist && !titleExist;
     }
 
     private void removeNote() {
-        NotesOrderUtil.removeNoteFromOrderList(note.id, getContext());
+        NotesOrderUtil.removeNoteFromOrderList(note.getId(), getContext());
         dbHelper.delete(note);
     }
 
