@@ -12,24 +12,24 @@ import java.util.*
  */
 
 class DbHelper(appDatabase: AppDatabase) {
-    private val noteDAO: NoteDAO? = appDatabase.noteDao
+    private val noteDAO: NoteDAO = appDatabase.noteDao
 
-    fun getNote(uuid: UUID?): Note? = noteDAO?.getNote(uuid)
+    fun getNote(uuid: UUID?): Note? = noteDAO.getNote(uuid)
 
-    fun getNoteRx(uuid: UUID): Single<Note> = Single.fromCallable { noteDAO?.getNote(uuid) }
+    fun getNoteRx(uuid: UUID): Single<Note> = Single.fromCallable { noteDAO.getNote(uuid) }
 
-    fun insert(note: Note) = noteDAO?.insert(note)
+    fun insert(note: Note) = noteDAO.insert(note)
 
-    fun insertRx(note: Note): Completable = Completable.fromAction { noteDAO?.insert(note) }
+    fun insertRx(note: Note): Completable = Completable.fromAction { noteDAO.insert(note) }
 
     fun delete(note: Note) {
         getPhotoFile(note)?.delete()
-        noteDAO?.delete(note)
+        noteDAO.delete(note)
     }
 
     fun deleteRx(note: Note?): Completable = Completable.fromAction {
-        getPhotoFile(note)!!.delete()
-        noteDAO?.delete(note)
+        getPhotoFile(note)?.delete()
+        noteDAO.delete(note)
     }
 
     fun getPhotoFile(note: Note?): File? {

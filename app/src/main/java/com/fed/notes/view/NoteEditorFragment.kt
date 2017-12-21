@@ -15,7 +15,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import com.fed.notes.App
 import com.fed.notes.BuildConfig
 import com.fed.notes.R
@@ -217,12 +216,10 @@ class NoteEditorFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         if (!noteEmpty()) {
-            dbHelper.insert(note!!)
             dbHelper.insertRx(note!!)
                     .subscribeOn(Schedulers.io())
-                    .subscribe({ })
-//                            ,
-//                            Consumer<Throwable> { it.printStackTrace() })
+                    .subscribe({},
+                            Throwable::printStackTrace)
         } else {
             removeNote()
         }
@@ -236,7 +233,7 @@ class NoteEditorFragment : Fragment() {
     }
 
     private fun removeNote() {
-        NotesOrderUtil.removeNoteFromOrderList(note?.id, context)
+        NotesOrderUtil.removeNoteFromOrderList(note!!.id, context)
         dbHelper.delete(note!!)
     }
 }

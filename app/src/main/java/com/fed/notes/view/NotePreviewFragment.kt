@@ -184,13 +184,11 @@ class NotePreviewFragment : Fragment() {
         deleteAlertDialog.setTitle(R.string.alert_on_del_title)
         deleteAlertDialog.setMessage(R.string.alert_on_del_text)
         deleteAlertDialog.setPositiveButton(R.string.alert_on_del_yes) { dialog, which ->
-            NotesOrderUtil.removeNoteFromOrderList(note?.id, context)
+            NotesOrderUtil.removeNoteFromOrderList(note!!.id, context)
             dbHelper.deleteRx(note)
                     .subscribeOn(Schedulers.io())
-                    .subscribe()
-            //fixme add Throwable::printStacktrace in onError callback
-//                    ?.subscribe({},
-//                            Consumer<Throwable> { it.printStackTrace() })
+                    .subscribe({},
+                            Throwable::printStackTrace)
             activity.onBackPressed()
         }
         deleteAlertDialog.setNeutralButton(R.string.alert_on_del_cancel) { dialog, which -> }
