@@ -11,7 +11,6 @@ import android.support.v4.content.FileProvider
 import android.support.v7.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,9 +27,6 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_note_editor.*
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
-import java.lang.System.`in`
-import java.lang.System.out
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -189,25 +185,16 @@ class NoteEditorFragment : Fragment() {
                 val imgUri = data?.data
                 val chunkSize = 1024
                 val imageData = ByteArray(chunkSize)
-                try {
-                    val inputStream = activity.contentResolver.openInputStream(imgUri)
-                    val outputStream = FileOutputStream(photoFile)
-                    while (true) {
-                        val bytesRead = inputStream.read(imageData)
-                        if (bytesRead > 0) {
-                            outputStream.write(Arrays.copyOfRange(imageData, 0, Math.max(0, bytesRead)))
-                        } else break
-                    }
-                } catch (e: Exception) {
-                    Log.e("Something wrong.", e.toString())
-                } finally {
-                    try {
-                        `in`.close()
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
-                    out.close()
+                val inputStream = activity.contentResolver.openInputStream(imgUri)
+                val outputStream = FileOutputStream(photoFile)
+                while (true) {
+                    val bytesRead = inputStream.read(imageData)
+                    if (bytesRead > 0) {
+                        outputStream.write(Arrays.copyOfRange(imageData, 0, Math.max(0, bytesRead)))
+                    } else break
                 }
+                inputStream.close()
+                outputStream.close()
                 updatePhotoView()
             }
         }

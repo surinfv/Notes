@@ -45,12 +45,11 @@ class NotePreviewFragment : Fragment() {
         }
     }
 
-    lateinit private var noteID: UUID
-
     private var note: Note? = null
     private var photoFile: File? = null
     private var uriPhotoFile: Uri? = null
 
+    lateinit private var noteID: UUID
     @Inject
     lateinit var dbHelper: DbHelper
 
@@ -66,21 +65,6 @@ class NotePreviewFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//                dbHelper.getNoteRx(noteID)
-//                        .subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .subscribe(
-//                            nt -> {
-//                                note = nt;
-//                                photoFile = dbHelper.getPhotoFile(note);
-//                                if (Build.VERSION.SDK_INT > 23) {
-//                                    uriPhotoFile = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", photoFile);
-//                                } else {
-//                                    uriPhotoFile = Uri.fromFile(photoFile);
-//                                }
-//                            },
-//                            Throwable::printStackTrace
-//                        );
         note = dbHelper.getNote(noteID)
         if (note != null) {
             initFabs()
@@ -138,7 +122,6 @@ class NotePreviewFragment : Fragment() {
             appbar_layout.visibility = View.GONE
             note_title_text_view.visibility = View.VISIBLE
         }
-        //        photoView.setImageURI(Uri.fromFile(photoFile));
     }
 
     private fun showPhotoDialog() {
