@@ -20,6 +20,7 @@ import com.fed.notes.utils.ImageDialog
 import com.fed.notes.utils.NotesOrderUtil
 import com.fed.notes.utils.PictureUtils
 import com.fed.notes.utils.inflate
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_note_preview.*
 import java.io.File
@@ -28,7 +29,7 @@ import java.util.*
 import javax.inject.Inject
 
 /**
- * Created by f on 05.05.2017.
+ * Created by Fedor SURIN on 05.05.2017.
  */
 
 class NotePreviewFragment : Fragment() {
@@ -66,6 +67,18 @@ class NotePreviewFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         note = dbHelper.getNote(noteID)
+        noteLoaded()
+
+//        dbHelper.getNoteRx(noteID)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe({
+//                    note = it
+//                    noteLoaded()
+//                }, Throwable::printStackTrace)
+    }
+
+    private fun noteLoaded() {
         if (note != null) {
             initFabs()
             updateInfo()

@@ -26,8 +26,8 @@ import java.util.*
 import javax.inject.Inject
 
 /**
- * Created by Fedor SURIN on 10.05.2017.
- */
+* Created by Fedor SURIN on 10.05.2017.
+*/
 
 class ListFragment : Fragment() {
 

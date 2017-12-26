@@ -32,8 +32,8 @@ import java.util.*
 import javax.inject.Inject
 
 /**
- * Created by f on 05.05.2017.
- */
+* Created by Fedor SURIN on 05.05.2017.
+*/
 
 class NoteEditorFragment : Fragment() {
     companion object {
@@ -127,6 +127,16 @@ class NoteEditorFragment : Fragment() {
         note_photo_image_view.setOnClickListener { showPhotoDialog() }
     }
 
+    private fun updatePhotoView() {
+        if (photoFile!!.exists()) {
+            val bitmap = PictureUtils.getScaledBitmap(photoFile?.path, activity)
+            note_photo_image_view.setImageBitmap(bitmap)
+            note_photo_image_view.visibility = View.VISIBLE
+        } else {
+            note_photo_image_view.visibility = View.GONE
+        }
+    }
+
     private fun showPhotoDialog() {
         val manager = fragmentManager
         val dialog = ImageDialog.newInstance(photoFile?.path)
@@ -136,44 +146,39 @@ class NoteEditorFragment : Fragment() {
     private fun takePhotoDialog() {
         val photoAlertDialog = AlertDialog.Builder(activity)
         photoAlertDialog.setTitle(R.string.alert_on_photo_title)
-                .setPositiveButton(R.string.alert_on_photo_cam) { dialog, which ->
-                    capturePhotoIntent!!.putExtra(MediaStore.EXTRA_OUTPUT, uriPhotoFile)
-                    startActivityForResult(capturePhotoIntent, REQUEST_PHOTO_CAM)
-                }
-                .setNegativeButton(R.string.alert_on_photo_gallery) { dialog, which ->
-                    val photoPickerIntent = Intent(Intent.ACTION_GET_CONTENT)
-                    photoPickerIntent.type = "image/*"
-                    startActivityForResult(photoPickerIntent, REQUEST_PHOTO_GAL)
-                }
+                .setPositiveButton(R.string.alert_on_photo_cam) { dialog, which -> getNewPhotoIntent() }
+                .setNegativeButton(R.string.alert_on_photo_gallery) { dialog, which -> choosePhotoIntent() }
 
         if (!photoFile!!.exists()) {
             photoAlertDialog.setMessage(R.string.alert_on_photo_text_first_photo)
         } else {
             photoAlertDialog.setMessage(R.string.alert_on_photo_text_second_photo)
-            photoAlertDialog.setNeutralButton(R.string.alert_on_photo_remove) { dialog, which ->
-                AlertDialog.Builder(activity)
-                        .setTitle(R.string.alert_del_photo_title)
-                        .setMessage(R.string.alert_del_photo_text)
-                        .setPositiveButton(R.string.alert_del_photo_yes) { dialog12, which12 ->
-                            photoFile!!.delete()
-                            updatePhotoView()
-                        }
-                        .setNegativeButton(R.string.alert_del_photo_no) { dialog1, which1 -> }
-                        .show()
-            }
+            photoAlertDialog.setNeutralButton(R.string.alert_on_photo_remove) { dialog, which -> deletePhotoDialog() }
         }
         photoAlertDialog.show()
     }
 
-    private fun updatePhotoView() {
-        if (photoFile!!.exists()) {
-            val bitmap = PictureUtils.getScaledBitmap(photoFile?.path, activity)
-            note_photo_image_view.setImageBitmap(bitmap)
-            note_photo_image_view.visibility = View.VISIBLE
-        } else {
-            note_photo_image_view.visibility = View.GONE
-        }
-        //        photoView.setImageURI(Uri.fromFile(photoFile));
+    private fun getNewPhotoIntent() {
+        capturePhotoIntent!!.putExtra(MediaStore.EXTRA_OUTPUT, uriPhotoFile)
+        startActivityForResult(capturePhotoIntent, REQUEST_PHOTO_CAM)
+    }
+
+    private fun choosePhotoIntent() {
+        val photoPickerIntent = Intent(Intent.ACTION_GET_CONTENT)
+        photoPickerIntent.type = "image/*"
+        startActivityForResult(photoPickerIntent, REQUEST_PHOTO_GAL)
+    }
+
+    private fun deletePhotoDialog() {
+        AlertDialog.Builder(activity)
+                .setTitle(R.string.alert_del_photo_title)
+                .setMessage(R.string.alert_del_photo_text)
+                .setPositiveButton(R.string.alert_del_photo_yes) { dialog12, which12 ->
+                    photoFile!!.delete()
+                    updatePhotoView()
+                }
+                .setNegativeButton(R.string.alert_del_photo_no) { dialog1, which1 -> }
+                .show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -181,23 +186,26 @@ class NoteEditorFragment : Fragment() {
         when (requestCode) {
             REQUEST_PHOTO_CAM -> updatePhotoView()
             REQUEST_PHOTO_GAL -> {
-                //по полученному УРИ пишем в файл картику - жесть какая-то
-                val imgUri = data?.data
-                val chunkSize = 1024
-                val imageData = ByteArray(chunkSize)
-                val inputStream = activity.contentResolver.openInputStream(imgUri)
-                val outputStream = FileOutputStream(photoFile)
-                while (true) {
-                    val bytesRead = inputStream.read(imageData)
-                    if (bytesRead > 0) {
-                        outputStream.write(Arrays.copyOfRange(imageData, 0, Math.max(0, bytesRead)))
-                    } else break
-                }
-                inputStream.close()
-                outputStream.close()
+                savePictureToFile(data)
                 updatePhotoView()
             }
         }
+    }
+
+    private fun savePictureToFile(data: Intent?) {
+        val imgUri = data?.data
+        val chunkSize = 1024
+        val imageData = ByteArray(chunkSize)
+        val inputStream = activity.contentResolver.openInputStream(imgUri)
+        val outputStream = FileOutputStream(photoFile)
+        while (true) {
+            val bytesRead = inputStream.read(imageData)
+            if (bytesRead > 0) {
+                outputStream.write(Arrays.copyOfRange(imageData, 0, Math.max(0, bytesRead)))
+            } else break
+        }
+        inputStream.close()
+        outputStream.close()
     }
 
     override fun onDestroy() {
