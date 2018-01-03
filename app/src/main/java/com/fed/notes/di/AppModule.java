@@ -12,10 +12,6 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 
-/**
- * Created by Fedor SURIN on 03.11.2017.
- */
-
 @Module
 public class AppModule {
     private Context context;
@@ -42,6 +38,6 @@ public class AppModule {
     @Singleton
     @Provides
     DbHelper provideDbHelper(AppDatabase appDatabase) {
-        return new DbHelper(appDatabase);
+        return new DbHelper(appDatabase.getNoteDao());
     }
 }
