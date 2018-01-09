@@ -8,9 +8,7 @@ import android.arch.persistence.room.Query;
 
 import java.util.UUID;
 
-/**
- * Created by Fedor SURIN on 31.10.2017.
- */
+import io.reactivex.Single;
 
 @Dao
 public interface NoteDAO {
@@ -23,6 +21,14 @@ public interface NoteDAO {
 
     @Query("SELECT * FROM notes WHERE id = :id")
     Note getNote(UUID id);
+    
+    /**
+     * Помимо просто возврата реактивных оберток в room можно подписаться на изменения.
+     * Если ты вместо single вернешь flowable, то тебе в подписку будут прилетать изменения
+     * если таблица поменялась :) enjoy
+     */
+    @Query("SELECT * FROM notes WHERE id = :id")
+    Single<Note> getNoteRx(UUID id);
 
 // --Commented out by Inspection START (03.11.2017 12:11):
 //    @Query("SELECT * FROM notes")

@@ -59,6 +59,7 @@ dependencies {
     compile "android.arch.persistence.room:runtime:$roomPersistence"
     annotationProcessor "android.arch.persistence.room:compiler:$roomPersistence"
     kapt "android.arch.persistence.room:compiler:$roomPersistence"
+    compile "android.arch.persistence.room:rxjava2:$roomPersistence"
 
     compile "com.google.dagger:dagger:$dagger2"
     compile "com.google.dagger:dagger-android-support:$dagger2"

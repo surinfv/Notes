@@ -8,10 +8,6 @@ import javax.inject.Singleton
 
 import dagger.Component
 
-/**
- * Created by Fedor SURIN on 03.11.2017.
- */
-
 @Singleton
 @Component(modules = arrayOf(AppModule::class))
 interface AppComponent {

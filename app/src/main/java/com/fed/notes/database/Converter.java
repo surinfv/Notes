@@ -7,10 +7,6 @@ import com.google.gson.Gson;
 import java.util.Date;
 import java.util.UUID;
 
-/**
- * Created by Fedor SURIN on 26.10.2017.
- */
-
 public class Converter {
 
     @TypeConverter
