@@ -12,17 +12,12 @@ import android.widget.ImageView;
 
 import com.fed.notes.R;
 
-
-/**
- * Created by f on 10.04.2017.
- */
-
 public class ImageDialog extends DialogFragment {
-    private static final String IMAGEPATH = "imagepath";
+    private static final String IMAGE_PATH = "image_path";
 
     public static ImageDialog newInstance(String path) {
         Bundle args = new Bundle();
-        args.putSerializable(IMAGEPATH, path);
+        args.putSerializable(IMAGE_PATH, path);
         ImageDialog imageDialog = new ImageDialog();
         imageDialog.setArguments(args);
         return imageDialog;
@@ -34,7 +29,7 @@ public class ImageDialog extends DialogFragment {
         Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.image_dialog);
 
-        String path = getArguments().getSerializable(IMAGEPATH).toString();
+        String path = getArguments().getSerializable(IMAGE_PATH).toString();
         Bitmap bitmap = PictureUtils.getScaledBitmap(path, getActivity());
 
         ImageView imageView = dialog.findViewById(R.id.imageView);

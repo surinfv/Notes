@@ -31,13 +31,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-/**
-* Created by Fedor SURIN on 05.05.2017.
-*/
-
 class NoteEditorFragment : Fragment() {
     companion object {
-        private val ARGS_NOTE_ID = "argsnoteid"
+        private val ARGS_NOTE_ID = "args_note_id"
         private val REQUEST_PHOTO_CAM = 0
         private val REQUEST_PHOTO_GAL = 1
 
@@ -87,7 +83,7 @@ class NoteEditorFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         note_title_text_view.setText(note?.title)
-        note_title_text_view.addTextChangedListener(object : TextWatcher {
+        note_title_text_view.addTextChangedListener(object : TextWatcher { // попробуй RxTextView.textChanges(note_title_text_view), раз уж с rx начинаешь общаться :)
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
 
             }
@@ -198,16 +194,28 @@ class NoteEditorFragment : Fragment() {
         val imageData = ByteArray(chunkSize)
         val inputStream = activity.contentResolver.openInputStream(imgUri)
         val outputStream = FileOutputStream(photoFile)
+
         while (true) {
             val bytesRead = inputStream.read(imageData)
             if (bytesRead > 0) {
                 outputStream.write(Arrays.copyOfRange(imageData, 0, Math.max(0, bytesRead)))
             } else break
         }
-        inputStream.close()
+        inputStream.close() // надо обернуть в finally. или посмотри котлиновскую функцию .use { } - там под капотом самый правильный способ работы с подобными штуками
         outputStream.close()
     }
 
+    /**
+     * Вообще не подходящее место для такой операции.
+     * Поскольку у тебя запись идет асинхронно - может получиться так, что ты откроешь предыдущий фрагмент
+     * еще до того, как данные запишутся\удалятся.
+     * Я бы посоветовал "контролировать" все выходы с экрана, а именно onBackPressed и нажатие на завершающий контрол
+     * Можно выводить диалог для подтверждения выхода по onBackPressed()
+     * Если в диалоге подтвердили изменения - то покрутить какой нить прогресс, а закрывать уже из .subscribe({ тут }
+     *
+     * И в случае удаления откатывать стек фраментов сразу на список, без попадания на фрагмент редактирования
+     *
+     */
     override fun onDestroy() {
         super.onDestroy()
         if (!noteEmpty()) {

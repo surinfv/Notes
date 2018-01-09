@@ -4,10 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.KeyEvent
 
-/**
- * Created by f on 22.06.2017.
- */
-
+// Очень плохое название :) Лучше называть попонятнее, особенно классы
 class EditTextModif(context: Context, attrs: AttributeSet) : android.support.v7.widget.AppCompatEditText(context, attrs) {
 
     override fun onKeyPreIme(keyCode: Int, event: KeyEvent): Boolean {

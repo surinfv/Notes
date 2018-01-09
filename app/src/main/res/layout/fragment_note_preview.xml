@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:fab="http://schemas.android.com/tools"
 
     android:layout_width="match_parent"
@@ -60,6 +61,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:visibility="gone"
+                tools:visibility="visible"
                 android:hint="@string/note_title_hint"
                 android:inputType="text"
                 android:textSize="22sp"
@@ -71,15 +74,15 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/note_comment_hint"
                 android:inputType="textMultiLine"
-                android:textSize="18sp"
-
-                />
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/note_date_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="test date 2017" />
+                tools:text="test date 2017" />
 
         </LinearLayout>
 

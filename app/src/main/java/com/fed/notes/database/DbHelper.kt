@@ -7,16 +7,11 @@ import io.reactivex.Single
 import java.io.File
 import java.util.*
 
-/**
- * Created by Fedor SURIN on 12.11.2017.
- */
-
-class DbHelper(appDatabase: AppDatabase) {
-    private val noteDAO: NoteDAO = appDatabase.noteDao
+class DbHelper(private val noteDAO: NoteDAO) {
 
     fun getNote(uuid: UUID?): Note? = noteDAO.getNote(uuid)
 
-    fun getNoteRx(uuid: UUID): Single<Note> = Single.fromCallable { noteDAO.getNote(uuid) }
+    fun getNoteRx(uuid: UUID): Single<Note> = noteDAO.getNoteRx(uuid)
 
     fun insert(note: Note) = noteDAO.insert(note)
 
@@ -38,6 +33,6 @@ class DbHelper(appDatabase: AppDatabase) {
         } else {
             App.getInstance().filesDir
         }
-        return if (externalFileDir == null) null else File(externalFileDir, note?.photoFilename)
+        return if (externalFileDir == null) null else File(externalFileDir, note?.getPhotoFilename())
     }
 }
