@@ -1,18 +1,14 @@
 package com.fed.notes.view
 
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.ShareCompat
-import android.support.v4.content.FileProvider
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.fed.notes.App
-import com.fed.notes.BuildConfig
 import com.fed.notes.R
 import com.fed.notes.database.DbHelper
 import com.fed.notes.database.Note
@@ -56,7 +52,6 @@ class NotePreviewFragment : Fragment() {
 
         val note = dbHelper.getNote(noteID)
         if (note == null) {
-            // Я бы советовал вообще не открывать этот фрагмент, если такой заметки нет, ибо это оч странно
             activity.supportFragmentManager.popBackStack()
         } else {
             showNote(note)
@@ -71,8 +66,6 @@ class NotePreviewFragment : Fragment() {
 //                }, Throwable::printStackTrace)
     }
 
-    // Методы в классе обычно распологают по степени открытости, паблики, потом протектед, потом приватные.
-    // ЖЦ обычно вверху, но это не строго уже, а дело вкуса. Лично мне так удобнее читать
     override fun onResume() {
         super.onResume()
         fab_menu.collapse()
@@ -83,8 +76,7 @@ class NotePreviewFragment : Fragment() {
 
         showTextFromNote(note)
         initFabs(photoFile, note)
-        updateInfo(photoFile)
-
+        updatePhotoView(photoFile)
     }
 
     private fun initFabs(photoFile: File?, note: Note) {
@@ -98,15 +90,10 @@ class NotePreviewFragment : Fragment() {
         fab_delete.setOnClickListener { deleteNoteDialog(note) }
     }
 
-    private fun updateInfo(photoFile: File?) {
-        updatePhotoView(photoFile)
-    }
-
     private fun showTextFromNote(note: Note) {
         toolbar.title = note.title
 
         note.title?.let {
-            // по дефолту невидимые, если надо - показываешь
             note_title_text_view.visibility = View.VISIBLE
             note_title_text_view.text = note.title
         }
@@ -116,16 +103,14 @@ class NotePreviewFragment : Fragment() {
             note_description_text_view.text = note.description
         }
 
-        note_date_text_view.showDate(context, note.date) // Это я просто подвыебнуться :)
-        // что бы наглядно показать как экстеншны можно заюзать.
-        // Удобно, если у тя такой код повторяется, для одного раза конечно не надо
+        note_date_text_view.showDate(context, note.date)
     }
 
     private fun updatePhotoView(photoFile: File?) {
         if (photoFile!!.exists()) {
-            val bitmap = PictureUtils.getScaledBitmap(photoFile?.path, activity)
+            val bitmap = PictureUtils.getScaledBitmap(photoFile.path, activity)
             note_photo_image_view.setImageBitmap(bitmap)
-            note_photo_image_view.setOnClickListener { showPhotoDialog(photoFile?.path) }
+            note_photo_image_view.setOnClickListener { showPhotoDialog(photoFile.path) }
             appbar_layout.visibility = View.VISIBLE
             note_title_text_view.visibility = View.GONE
         } else {
@@ -155,13 +140,7 @@ class NotePreviewFragment : Fragment() {
     }
 
     private fun getImageIntent(photoFile: File?, note: Note): Intent {
-
-        val uriPhotoFile = if (Build.VERSION.SDK_INT > 23) { //я бы вынес в экстеншн, или утилку какую-нить
-            FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID + ".provider", photoFile)
-        } else {
-            Uri.fromFile(photoFile)
-        }
-
+        val uriPhotoFile = UriFetcherUtil.getUri(context, photoFile)
         return ShareCompat.IntentBuilder.from(activity)
                 .setType("plain/text")
                 .setSubject(resources.getString(R.string.email_text) + note.title)
@@ -186,19 +165,15 @@ class NotePreviewFragment : Fragment() {
         }.show()
     }
 
-    private fun editNoteFragment(note: Note) {
-        (activity as MainActivity).openNoteFragmentEditor(note)
-    }
+    private fun editNoteFragment(note: Note) = (activity as MainActivity).openNoteFragmentEditor(note)
 
     private fun deleteNoteDialog(note: Note) {
-        val deleteAlertDialog = AlertDialog.Builder(activity).apply {
-
+        AlertDialog.Builder(activity).apply {
             setTitle(R.string.alert_on_del_title)
             setMessage(R.string.alert_on_del_text)
             setPositiveButton(R.string.alert_on_del_yes) { _, _ -> onDeleteClicked(note) }
             setNeutralButton(R.string.alert_on_del_cancel, null)
-        }
-        deleteAlertDialog.show()
+        }.show()
     }
 
     private fun onDeleteClicked(note: Note) {

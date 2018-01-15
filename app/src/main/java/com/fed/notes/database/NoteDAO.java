@@ -23,9 +23,8 @@ public interface NoteDAO {
     Note getNote(UUID id);
     
     /**
-     * Помимо просто возврата реактивных оберток в room можно подписаться на изменения.
-     * Если ты вместо single вернешь flowable, то тебе в подписку будут прилетать изменения
-     * если таблица поменялась :) enjoy
+     * если вернуть вместо single - flowable, то в подписку будут прилетать изменения
+     * если таблица поменялась
      */
     @Query("SELECT * FROM notes WHERE id = :id")
     Single<Note> getNoteRx(UUID id);

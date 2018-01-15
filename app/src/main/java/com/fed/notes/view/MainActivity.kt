@@ -16,18 +16,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val fm = supportFragmentManager
-        var fragment: Fragment? = fm.findFragmentById(R.id.fragment_container)
+        var fragment: Fragment? = supportFragmentManager.findFragmentById(R.id.fragment_container)
         if (fragment == null) {
             fragment = ListFragment()
-            fm.beginTransaction()
+            supportFragmentManager.beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit()
         }
     }
 
     fun openNoteFragmentPreview(note: Note) {
-//        val fragment = NotePreviewFragment.newInstance(note.id)
         val fragment = NotePreviewFragment.newInstance(note.id)
         supportFragmentManager
                 .beginTransaction()

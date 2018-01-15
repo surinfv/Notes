@@ -3,6 +3,7 @@ package com.fed.notes.view
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
@@ -82,7 +83,7 @@ class ListFragment : Fragment() {
         notesOrder.add(0, note.id)
         dbHelper.insertRx(note)
                 .subscribeOn(Schedulers.io())
-                .subscribe({ run { (activity as MainActivity).openNoteFragmentEditor(note) } },
+                .subscribe({  (activity as MainActivity).openNoteFragmentEditor(note)  },
                         Throwable::printStackTrace)
     }
 
@@ -147,12 +148,12 @@ class ListFragment : Fragment() {
 
             val snackBar = Snackbar.make(note_recycler_view, noteTmp.title + resources.getString(R.string.snackbar_delete), Snackbar.LENGTH_LONG)
             val snackBarView = snackBar.view
-            snackBarView.setBackgroundColor(resources.getColor(R.color.snack_bar_background))
+            snackBarView.setBackgroundColor(ContextCompat.getColor(context, R.color.snack_bar_background))
             snackBar.setAction(resources.getString(R.string.snackbar_undo), snackBarOnClickListener)
             snackBar.show()
 
             snackBar.addCallback(object : Snackbar.Callback() {
-                override fun onDismissed(snackbar: Snackbar?, event: Int) {
+                override fun onDismissed(snackBar: Snackbar?, event: Int) {
                     if (event != Snackbar.Callback.DISMISS_EVENT_ACTION) {
                         dbHelper.deleteRx(noteTmp)
                                 .subscribeOn(Schedulers.io())
@@ -189,8 +190,6 @@ class ListFragment : Fragment() {
             itemView.item_list_date.text = dateFormat.format(this.note.date)
         }
 
-        override fun onClick(v: View) {
-            (activity as MainActivity).openNoteFragmentPreview(note)
-        }
+        override fun onClick(v: View) = (activity as MainActivity).openNoteFragmentPreview(note)
     }
 }
