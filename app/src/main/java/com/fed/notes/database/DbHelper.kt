@@ -29,9 +29,9 @@ class DbHelper(private val noteDAO: NoteDAO) {
 
     fun getPhotoFile(note: Note?): File? {
         val externalFileDir: File? = if (Environment.MEDIA_MOUNTED == Environment.getExternalStorageState()) {
-            App.getInstance().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            App.instance?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         } else {
-            App.getInstance().filesDir
+            App.instance?.filesDir
         }
         return if (externalFileDir == null) null else File(externalFileDir, note?.getPhotoFilename())
     }

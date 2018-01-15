@@ -53,7 +53,7 @@ class NoteEditorFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.getComponent().inject(this)
+        App.component?.inject(this)
         val noteID = arguments.getSerializable(ARGS_NOTE_ID) as UUID
 
         note = dbHelper.getNote(noteID)
