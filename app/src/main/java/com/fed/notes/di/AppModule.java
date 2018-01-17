@@ -32,6 +32,7 @@ public class AppModule {
         return Room
                 .databaseBuilder(context, AppDatabase.class, "notes-db")
                 .allowMainThreadQueries()   //TODO: remove this - synk db queries
+                .addMigrations(AppDatabase.MIGRATION_1_2)
                 .build();
     }
 

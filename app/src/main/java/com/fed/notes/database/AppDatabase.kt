@@ -3,19 +3,16 @@ package com.fed.notes.database
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
-import android.os.Environment
+import android.arch.persistence.room.migration.Migration
 
-import com.fed.notes.App
 
-import java.io.File
-
-/**
- * Created by Fedor SURIN on 26.10.2017.
- */
-
-@Database(entities = arrayOf(Note::class), version = 1)
+@Database(entities = arrayOf(Note::class), version = 2)
 @TypeConverters(Converter::class)
 abstract class AppDatabase : RoomDatabase() {
-
     abstract val noteDao: NoteDAO
+
+    companion object {
+        @JvmField
+        val MIGRATION_1_2: Migration = Migration1To2()
+    }
 }
