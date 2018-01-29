@@ -140,7 +140,7 @@ class NotePreviewFragment : Fragment() {
     }
 
     private fun getImageIntent(photoFile: File?, note: Note): Intent {
-        val uriPhotoFile = UriFetcherUtil.getUri(context, photoFile)
+        val uriPhotoFile = getUri(context, photoFile)
         return ShareCompat.IntentBuilder.from(activity)
                 .setType("plain/text")
                 .setSubject(resources.getString(R.string.email_text) + note.title)
@@ -177,7 +177,7 @@ class NotePreviewFragment : Fragment() {
     }
 
     private fun onDeleteClicked(note: Note) {
-        NotesOrderUtil.removeNoteFromOrderList(note.id, context)
+        removeNoteFromOrderList(note.id, context)
         dbHelper.deleteRx(note)
                 .subscribeOn(Schedulers.io())
                 .subscribe({},

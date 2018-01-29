@@ -17,8 +17,9 @@ import com.fed.notes.database.DbHelper
 import com.fed.notes.database.Note
 import com.fed.notes.touchhelper.ItemTouchHelperAdapter
 import com.fed.notes.touchhelper.SimpleItemTouchHelperCallback
-import com.fed.notes.utils.NotesOrderUtil
 import com.fed.notes.utils.inflate
+import com.fed.notes.utils.loadOrder
+import com.fed.notes.utils.saveOrder
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_note_list.*
 import kotlinx.android.synthetic.main.list_item.view.*
@@ -27,13 +28,13 @@ import java.util.*
 import javax.inject.Inject
 
 /**
-* Created by Fedor SURIN on 10.05.2017.
-*/
+ * Created by Fedor SURIN on 10.05.2017.
+ */
 
 class ListFragment : Fragment() {
 
     private var adapter: NoteAdapter? = null
-    lateinit private var notesOrder: MutableList<UUID>
+    private lateinit var notesOrder: MutableList<UUID>
 
     @Inject
     lateinit var dbHelper: DbHelper
@@ -64,7 +65,7 @@ class ListFragment : Fragment() {
     }
 
     private fun updateUI() {
-        notesOrder = NotesOrderUtil.loadOrder(context)
+        notesOrder = loadOrder(context)
 
         val notes = ArrayList<Note?>()
         if (notesOrder.isNotEmpty()) {
@@ -83,13 +84,13 @@ class ListFragment : Fragment() {
         notesOrder.add(0, note.id)
         dbHelper.insertRx(note)
                 .subscribeOn(Schedulers.io())
-                .subscribe({  (activity as MainActivity).openNoteFragmentEditor(note)  },
+                .subscribe({ (activity as MainActivity).openNoteFragmentEditor(note) },
                         Throwable::printStackTrace)
     }
 
     override fun onPause() {
         super.onPause()
-        NotesOrderUtil.saveOrder(notesOrder, context)
+        saveOrder(notesOrder, context)
     }
 
     private inner class NoteAdapter internal constructor(private var notes: ArrayList<Note?>) : RecyclerView.Adapter<NoteHolder>(), ItemTouchHelperAdapter {

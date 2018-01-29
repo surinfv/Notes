@@ -58,7 +58,7 @@ class NoteEditorFragment : Fragment() {
 
         note = dbHelper.getNote(noteID)
         photoFile = dbHelper.getPhotoFile(note)
-        uriPhotoFile = UriFetcherUtil.getUri(context, photoFile)
+        uriPhotoFile = getUri(context, photoFile)
 
         //can take photo check:
         val packageManager = activity.packageManager
@@ -220,7 +220,7 @@ class NoteEditorFragment : Fragment() {
     }
 
     private fun removeNote() {
-        NotesOrderUtil.removeNoteFromOrderList(note!!.id, context)
+        removeNoteFromOrderList(note!!.id, context)
         dbHelper.delete(note!!)
     }
 }
