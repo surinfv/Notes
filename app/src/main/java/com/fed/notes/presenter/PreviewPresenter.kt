@@ -40,14 +40,15 @@ class PreviewPresenter {
             photoFile = dbHelper.getPhotoFile(note)
             fragment?.showNote(note!!, photoFile)
         }
-
+        //fixme - appbar_layout GONE not work in updatePhotoView() in this case
 //        dbHelper.getNoteRx(noteId)
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
 //                .subscribe({
-//                    if (note == null) {
+//                    if (it == null) {
 //                        fragment?.closeFragment()
 //                    } else {
+//                        note = it
 //                        photoFile = dbHelper.getPhotoFile(note)
 //                        fragment?.showNote(note!!, photoFile)
 //                    }

@@ -12,7 +12,7 @@ class DbHelper(private val noteDAO: NoteDAO) {
 
     fun getNote(uuid: UUID?): Note? = noteDAO.getNote(uuid)
 
-    fun getNoteRx(uuid: UUID): Single<Note> = noteDAO.getNoteRx(uuid)
+    fun getNoteRx(uuid: UUID?): Single<Note?> = noteDAO.getNoteRx(uuid)
 
     fun getNotesRx(ids: List<UUID>): Single<List<Note>> = noteDAO.getNotes(ids.toTypedArray())
 

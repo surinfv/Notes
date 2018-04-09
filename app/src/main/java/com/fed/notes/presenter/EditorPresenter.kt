@@ -43,7 +43,7 @@ class EditorPresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    note = it
+                    note = it!!
                     photoFile = dbHelper.getPhotoFile(note)
                     uriPhotoFile = getUri(context, photoFile)
                     setNote()
