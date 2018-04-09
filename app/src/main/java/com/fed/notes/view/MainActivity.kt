@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import com.fed.notes.R
 import com.fed.notes.database.Note
+import com.fed.notes.view.preview.NotePreviewFragment
 
 
 class MainActivity : AppCompatActivity() {
