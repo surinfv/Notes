@@ -19,6 +19,7 @@ import java.io.File
 import java.util.*
 import javax.inject.Inject
 
+
 class NotePreviewFragment : Fragment() {
     companion object {
         private val ARGS_NOTE_ID = "args_note_id"

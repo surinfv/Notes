@@ -6,9 +6,6 @@ import android.support.v7.app.AppCompatActivity
 import com.fed.notes.R
 import com.fed.notes.database.Note
 
-/**
- * Created by f on 10.05.2017.
- */
 
 class MainActivity : AppCompatActivity() {
 

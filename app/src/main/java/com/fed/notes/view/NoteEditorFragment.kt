@@ -46,7 +46,7 @@ class NoteEditorFragment : Fragment() {
     private var canTakePhoto: Boolean = false
     private var capturePhotoIntent: Intent? = null
     private var uriPhotoFile: Uri? = null
-    lateinit private var disposable: CompositeDisposable
+    private lateinit var disposable: CompositeDisposable
 
     @Inject
     lateinit var dbHelper: DbHelper
@@ -82,17 +82,6 @@ class NoteEditorFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         disposable.dispose()
-        /**
-         * Вообще не подходящее место для такой операции.
-         * Поскольку у тебя запись идет асинхронно - может получиться так, что ты откроешь предыдущий фрагмент
-         * еще до того, как данные запишутся\удалятся.
-         * Я бы посоветовал "контролировать" все выходы с экрана, а именно onBackPressed и нажатие на завершающий контрол
-         * Можно выводить диалог для подтверждения выхода по onBackPressed()
-         * Если в диалоге подтвердили изменения - то покрутить какой нить прогресс, а закрывать уже из .subscribe({ тут }
-         *
-         * И в случае удаления откатывать стек фраментов сразу на список, без попадания на фрагмент редактирования
-         *
-         */
         if (!noteEmpty()) {
             dbHelper.insertRx(note!!)
                     .subscribeOn(Schedulers.io())
