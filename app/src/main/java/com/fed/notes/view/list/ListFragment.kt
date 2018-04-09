@@ -1,4 +1,4 @@
-package com.fed.notes.view
+package com.fed.notes.view.list
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -11,35 +11,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.fed.notes.App
 import com.fed.notes.R
-import com.fed.notes.database.DbHelper
 import com.fed.notes.database.Entity.Note
-import com.fed.notes.view.touchhelper.ItemTouchHelperAdapter
-import com.fed.notes.view.touchhelper.SimpleItemTouchHelperCallback
+import com.fed.notes.presenter.ListPresenter
 import com.fed.notes.utils.inflate
 import com.fed.notes.utils.loadOrder
 import com.fed.notes.utils.saveOrder
-import io.reactivex.schedulers.Schedulers
+import com.fed.notes.view.MainActivity
+import com.fed.notes.view.touchhelper.ItemTouchHelperAdapter
+import com.fed.notes.view.touchhelper.SimpleItemTouchHelperCallback
 import kotlinx.android.synthetic.main.fragment_note_list.*
 import kotlinx.android.synthetic.main.list_item.view.*
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 
-class ListFragment : Fragment() {
+class ListFragment : Fragment(), ListInterface {
 
+    private lateinit var presenter: ListPresenter
     private var adapter: NoteAdapter? = null
     private lateinit var notesOrder: MutableList<UUID>
 
-    @Inject
-    lateinit var dbHelper: DbHelper
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        App.component?.inject(this)
-    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return container?.inflate(R.layout.fragment_note_list)
@@ -47,53 +40,64 @@ class ListFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         note_recycler_view.layoutManager = LinearLayoutManager(activity)
         fab_add_note.setIcon(R.drawable.ic_new_note)
-        fab_add_note.setOnClickListener { createNewNote() }
-    }
+        fab_add_note.setOnClickListener { (presenter.createNewNoteClicked()) }
 
-    override fun onResume() {
-        super.onResume()
-        updateUI()
 
+        adapter = NoteAdapter(ArrayList())
         val callback = SimpleItemTouchHelperCallback(adapter)
         val itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(note_recycler_view)
     }
 
-    private fun updateUI() {
-        notesOrder = loadOrder(context)
+    override fun onResume() {
+        super.onResume()
+        loadListOrder()
+        presenter = ListPresenter()
+        presenter.init()
+        presenter.attach(this)
+        presenter.updateUI(notesOrder)
+    }
 
-        val notes = ArrayList<Note?>()
-        if (notesOrder.isNotEmpty()) {
-            //TODO: get notes list in one query in order from order list
-            notesOrder.mapTo(notes) { dbHelper.getNote(it) }
-        }
+    override fun onPause() {
+        super.onPause()
+        presenter.onViewPause()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        presenter.detach()
+    }
+
+    override fun setNotes(notes: ArrayList<Note>) {
         if (adapter == null) adapter = NoteAdapter(notes)
         note_recycler_view.adapter = adapter
         adapter?.setNotes(notes)
         adapter?.notifyDataSetChanged()
     }
 
-    private fun createNewNote() {
-        val note = Note()
-
-        notesOrder.add(0, note.id)
-        dbHelper.insertRx(note)
-                .subscribeOn(Schedulers.io())
-                .subscribe({ (activity as MainActivity).openNoteFragmentEditor(note) },
-                        Throwable::printStackTrace)
+    override fun openNoteEditorFragment(note: Note) {
+        (activity as MainActivity).openNoteFragmentEditor(note)
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun addNoteToOrder(noteId: UUID) {
+        notesOrder.add(0, noteId)
+    }
+
+    override fun saveListOrder() {
         saveOrder(notesOrder, context)
     }
 
-    private inner class NoteAdapter internal constructor(private var notes: ArrayList<Note?>) : RecyclerView.Adapter<NoteHolder>(), ItemTouchHelperAdapter {
+    private fun loadListOrder() {
+        notesOrder = loadOrder(context)
+    }
+
+    private inner class NoteAdapter internal constructor(private var notes: ArrayList<Note>) : RecyclerView.Adapter<NoteHolder>(), ItemTouchHelperAdapter {
 
         private var noteTmpPos: Int = 0
-        lateinit private var noteTmp: Note
+        private lateinit var noteTmp: Note
         var snackBarOnClickListener: View.OnClickListener = View.OnClickListener {
             ///return just deleted note
             Toast.makeText(activity, noteTmp.title + resources.getString(R.string.snackbar_return), Toast.LENGTH_SHORT).show()
@@ -117,7 +121,7 @@ class ListFragment : Fragment() {
             return notes.size
         }
 
-        fun setNotes(notes: ArrayList<Note?>) {
+        fun setNotes(notes: ArrayList<Note>) {
             this.notes = notes
         }
 
@@ -153,10 +157,7 @@ class ListFragment : Fragment() {
             snackBar.addCallback(object : Snackbar.Callback() {
                 override fun onDismissed(snackBar: Snackbar?, event: Int) {
                     if (event != Snackbar.Callback.DISMISS_EVENT_ACTION) {
-                        dbHelper.deleteRx(noteTmp)
-                                .subscribeOn(Schedulers.io())
-                                .subscribe({},
-                                        Throwable::printStackTrace)
+                        presenter.deleteNote(noteTmp)
                     }
                 }
             })
@@ -177,7 +178,7 @@ class ListFragment : Fragment() {
             itemView.setOnClickListener(this)
         }
 
-        lateinit private var note: Note
+        private lateinit var note: Note
 
         fun bindNote(note: Note?) {
             if (note == null) return

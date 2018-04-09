@@ -8,6 +8,7 @@ import android.arch.persistence.room.Query;
 
 import com.fed.notes.database.Entity.Note;
 
+import java.util.List;
 import java.util.UUID;
 
 import io.reactivex.Single;
@@ -23,21 +24,10 @@ public interface NoteDAO {
 
     @Query("SELECT * FROM notes WHERE id = :id")
     Note getNote(UUID id);
-    
-    /**
-     * если вернуть вместо single - flowable, то в подписку будут прилетать изменения
-     * если таблица поменялась
-     */
+
     @Query("SELECT * FROM notes WHERE id = :id")
     Single<Note> getNoteRx(UUID id);
 
-// --Commented out by Inspection START (03.11.2017 12:11):
-//    @Query("SELECT * FROM notes")
-//    List<Note> getAllNotes();
-// --Commented out by Inspection STOP (03.11.2017 12:11)
-
-// --Commented out by Inspection START (03.11.2017 12:11):
-//    @Query("SELECT * FROM notes WHERE id IN(:ids)")
-//    List<Note> getNotes(UUID[] ids);
-// --Commented out by Inspection STOP (03.11.2017 12:11)
+    @Query("SELECT * FROM notes WHERE id IN(:ids)")
+    Single<List<Note>> getNotes(UUID[] ids);
 }

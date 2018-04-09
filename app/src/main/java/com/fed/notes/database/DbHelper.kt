@@ -14,14 +14,9 @@ class DbHelper(private val noteDAO: NoteDAO) {
 
     fun getNoteRx(uuid: UUID): Single<Note> = noteDAO.getNoteRx(uuid)
 
-    fun insert(note: Note) = noteDAO.insert(note)
+    fun getNotesRx(ids: List<UUID>): Single<List<Note>> = noteDAO.getNotes(ids.toTypedArray())
 
     fun insertRx(note: Note): Completable = Completable.fromAction { noteDAO.insert(note) }
-
-    fun delete(note: Note) {
-        getPhotoFile(note)?.delete()
-        noteDAO.delete(note)
-    }
 
     fun deleteRx(note: Note?): Completable = Completable.fromAction {
         getPhotoFile(note)?.delete()

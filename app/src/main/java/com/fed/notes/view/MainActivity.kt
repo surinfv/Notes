@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import com.fed.notes.R
 import com.fed.notes.database.Entity.Note
 import com.fed.notes.view.edit.NoteEditorFragment
+import com.fed.notes.view.list.ListFragment
 import com.fed.notes.view.preview.NotePreviewFragment
 
 

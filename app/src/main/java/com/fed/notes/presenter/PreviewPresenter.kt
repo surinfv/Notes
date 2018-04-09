@@ -40,6 +40,18 @@ class PreviewPresenter {
             photoFile = dbHelper.getPhotoFile(note)
             fragment?.showNote(note!!, photoFile)
         }
+
+//        dbHelper.getNoteRx(noteId)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe({
+//                    if (note == null) {
+//                        fragment?.closeFragment()
+//                    } else {
+//                        photoFile = dbHelper.getPhotoFile(note)
+//                        fragment?.showNote(note!!, photoFile)
+//                    }
+//                }, Throwable::printStackTrace)
     }
 
     fun sendEmailFabClicked() {
