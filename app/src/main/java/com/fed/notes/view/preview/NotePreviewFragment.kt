@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.fed.notes.R
-import com.fed.notes.database.Note
+import com.fed.notes.database.Entity.Note
 import com.fed.notes.presenter.PreviewPresenter
 import com.fed.notes.utils.*
 import com.fed.notes.view.MainActivity
@@ -32,18 +32,16 @@ class NotePreviewFragment : Fragment(), PreviewInterface {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        presenter = PreviewPresenter()
+        presenter.init(arguments.getSerializable(ARGS_NOTE_ID) as UUID)
+    }
+
     private lateinit var presenter: PreviewPresenter
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return container?.inflate(R.layout.fragment_note_preview)
-    }
-
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        presenter = PreviewPresenter()
-        presenter.init(arguments.getSerializable(ARGS_NOTE_ID) as UUID)
-
     }
 
     override fun onResume() {

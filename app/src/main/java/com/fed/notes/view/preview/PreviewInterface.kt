@@ -1,6 +1,6 @@
 package com.fed.notes.view.preview
 
-import com.fed.notes.database.Note
+import com.fed.notes.database.Entity.Note
 import java.io.File
 import java.util.*
 

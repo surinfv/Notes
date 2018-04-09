@@ -6,6 +6,8 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
+import com.fed.notes.database.Entity.Note;
+
 import java.util.UUID;
 
 import io.reactivex.Single;

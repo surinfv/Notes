@@ -2,7 +2,7 @@ package com.fed.notes.presenter
 
 import com.fed.notes.App
 import com.fed.notes.database.DbHelper
-import com.fed.notes.database.Note
+import com.fed.notes.database.Entity.Note
 import com.fed.notes.view.preview.PreviewInterface
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

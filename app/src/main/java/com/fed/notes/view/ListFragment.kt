@@ -14,9 +14,9 @@ import android.widget.Toast
 import com.fed.notes.App
 import com.fed.notes.R
 import com.fed.notes.database.DbHelper
-import com.fed.notes.database.Note
-import com.fed.notes.touchhelper.ItemTouchHelperAdapter
-import com.fed.notes.touchhelper.SimpleItemTouchHelperCallback
+import com.fed.notes.database.Entity.Note
+import com.fed.notes.view.touchhelper.ItemTouchHelperAdapter
+import com.fed.notes.view.touchhelper.SimpleItemTouchHelperCallback
 import com.fed.notes.utils.inflate
 import com.fed.notes.utils.loadOrder
 import com.fed.notes.utils.saveOrder

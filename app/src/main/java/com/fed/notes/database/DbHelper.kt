@@ -2,6 +2,7 @@ package com.fed.notes.database
 
 import android.os.Environment
 import com.fed.notes.App
+import com.fed.notes.database.Entity.Note
 import io.reactivex.Completable
 import io.reactivex.Single
 import java.io.File

@@ -4,7 +4,8 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import com.fed.notes.R
-import com.fed.notes.database.Note
+import com.fed.notes.database.Entity.Note
+import com.fed.notes.view.edit.NoteEditorFragment
 import com.fed.notes.view.preview.NotePreviewFragment
 
 
